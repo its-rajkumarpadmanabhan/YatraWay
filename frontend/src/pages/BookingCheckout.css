@@ -1,0 +1,73 @@
+.booking-head{ background:var(--ink); color:var(--white); padding:30px 0; }
+.booking-head h1{ font-size:24px; margin-bottom: 0; }
+.booking-head .sub{ font-size:13.5px; color:rgba(255,255,255,.6); margin-top:4px; }
+
+.stepper{ display:flex; gap:0; margin:28px 0 0; }
+.step{ flex:1; display:flex; align-items:center; gap:10px; padding-bottom:14px; border-bottom:3px solid rgba(255,255,255,.15); position:relative; }
+.step .num{ width:26px; height:26px; border-radius:50%; background:rgba(255,255,255,.12); color:rgba(255,255,255,.6); display:flex; align-items:center; justify-content:center; font-size:12.5px; font-weight:700; font-family:var(--f-mono); flex-shrink:0; }
+.step span.label{ font-size:13px; font-weight:700; color:rgba(255,255,255,.55); }
+.step.active .num{ background:var(--coral); color:var(--white); }
+.step.active span.label{ color:var(--white); }
+.step.active{ border-bottom-color:var(--coral); }
+.step.done .num{ background:var(--teal); color:var(--white); }
+.step.done span.label{ color:rgba(255,255,255,.85); }
+
+.booking-shell{ display:grid; grid-template-columns:1fr 360px; gap:40px; padding:44px 0 100px; align-items:start; }
+
+.step-panel{ display:none; }
+.step-panel.active{ display:block; }
+
+.panel-card{ background:var(--white); border:1px solid var(--line); border-radius:var(--radius-l); padding:30px; }
+.panel-card h3{ font-size:19px; margin-bottom:6px; }
+.panel-card .desc{ font-size:13.5px; color:var(--ink-soft); margin-bottom:24px; }
+
+.traveler-list{ display:flex; flex-direction:column; gap:12px; margin-bottom:6px; }
+.traveler-opt{
+  display:flex; align-items:center; gap:14px; border:1.5px solid var(--line); border-radius:var(--radius-m); padding:14px 16px;
+  cursor:pointer; transition:border-color .15s var(--ease), background .15s var(--ease);
+}
+.traveler-opt:has(input:checked){ border-color:var(--coral); background:#FCF3EF; }
+.traveler-opt input{ width:18px; height:18px; accent-color:var(--coral); }
+.traveler-opt .m-avatar{ width:38px; height:38px; border-radius:50%; background:var(--teal-soft); color:var(--teal); display:flex; align-items:center; justify-content:center; font-weight:700; font-family:var(--f-display); font-size:14px; }
+.traveler-opt .m-info{ flex:1; }
+.traveler-opt h5{ font-size:14.5px; font-family:var(--f-body); font-weight:700; margin-bottom:0; }
+.traveler-opt .m-meta{ font-size:12.5px; color:var(--ink-soft); }
+.traveler-opt .flag{ font-family:var(--f-mono); font-size:11.5px; color:var(--ink-soft); }
+
+.passport-block{
+  margin-top:26px; padding:20px; border-radius:var(--radius-m); border:1.5px dashed var(--coral);
+  background:#FCF3EF; display:none;
+}
+.passport-block.show{ display:block; }
+.passport-block .flag-row{ display:flex; align-items:center; gap:10px; margin-bottom:16px; }
+.passport-block .flag-row .badge{ background:var(--coral); color:var(--white); font-size:11px; font-weight:800; padding:4px 10px; border-radius:100px; font-family:var(--f-mono); }
+.passport-entry{ border:1px solid var(--line); border-radius:var(--radius-s); padding:16px; background:var(--white); margin-bottom:12px; }
+.passport-entry h6{ font-family:var(--f-body); font-size:13.5px; font-weight:700; margin-bottom:12px; display:flex; align-items:center; gap:8px; }
+.passport-entry .field-grid{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+
+.step-actions{ display:flex; justify-content:space-between; margin-top:26px; }
+
+.pay-options{ display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:20px; }
+.pay-opt{ border:1.5px solid var(--line); border-radius:var(--radius-s); padding:14px; text-align:center; font-weight:700; font-size:13px; cursor:pointer; }
+.pay-opt.selected{ border-color:var(--ink); background:var(--paper-2); }
+
+/* summary ticket */
+.summary-sticky{ position:sticky; top:96px; }
+.summary-ticket{ display:flex; }
+.summary-main{ flex:1; padding:24px; }
+.summary-stub{ width:100px; padding:24px 14px; background:var(--paper-2); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; }
+.summary-stub .stamp{ width:56px; height:56px; font-size:9.5px; }
+.summary-main h4{ font-size:16px; margin-bottom:4px; }
+.summary-main .r-loc{ font-size:13px; color:var(--ink-soft); margin-bottom:18px; }
+.summary-line{ display:flex; justify-content:space-between; font-size:13.5px; padding:9px 0; border-bottom:1px dashed var(--line); }
+.summary-line.total{ border-bottom:none; padding-top:14px; font-weight:800; font-size:16px; }
+.summary-line span:last-child{ font-weight:600; }
+
+@media (max-width:980px){
+  .booking-shell{ grid-template-columns:1fr; }
+  .stepper{ overflow-x:auto; }
+  .step span.label{ white-space:nowrap; }
+  .traveler-opt .m-meta{ display:block; }
+  .passport-entry .field-grid{ grid-template-columns:1fr; }
+  .pay-options{ grid-template-columns:1fr; }
+}
