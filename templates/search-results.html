@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Search results — Voyage</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="assets/styles.css">
+<style>
+  .results-bar{ background:var(--ink); color:var(--white); padding:26px 0; }
+  .results-bar .search-mini{
+    background:var(--white); border-radius:100px; padding:8px 8px 8px 20px; display:flex; align-items:center; gap:12px;
+    max-width:640px;
+  }
+  .results-bar .search-mini input{ border:none; outline:none; flex:1; font-size:14.5px; color:var(--ink); }
+  .results-bar h1{ font-size:24px; margin-top:16px; }
+  .results-bar .sub{ color:rgba(255,255,255,.6); font-size:13.5px; margin-top:4px; }
+
+  .type-tabs{ display:flex; gap:8px; margin:26px 0; }
+  .type-tab{
+    padding:9px 18px; border-radius:100px; border:1.5px solid var(--line); font-weight:700; font-size:13.5px; color:var(--ink-soft); background:var(--white);
+    display:flex; align-items:center; gap:6px;
+  }
+  .type-tab.active{ background:var(--ink); border-color:var(--ink); color:var(--white); }
+  .type-tab .count{ font-family:var(--f-mono); font-size:11px; opacity:.7; }
+
+  .results-shell{ display:grid; grid-template-columns:260px 1fr; gap:32px; padding-bottom:100px; }
+
+  .filter-group{ border-bottom:1px solid var(--line); padding:18px 0; }
+  .filter-group:first-child{ padding-top:0; }
+  .filter-group h5{ font-size:13px; text-transform:uppercase; letter-spacing:.05em; font-family:var(--f-body); font-weight:700; margin-bottom:12px; }
+  .filter-opt{ display:flex; align-items:center; justify-content:space-between; font-size:14px; color:var(--ink-soft); padding:5px 0; }
+  .filter-opt label{ display:flex; align-items:center; gap:8px; }
+  .filter-opt input{ accent-color:var(--coral); width:16px; height:16px; }
+  .price-range{ display:flex; align-items:center; gap:8px; font-size:13px; }
+  .price-range input[type=range]{ width:100%; accent-color:var(--coral); }
+  .star-filter{ display:flex; gap:6px; }
+  .star-filter span{ padding:6px 10px; border:1px solid var(--line); border-radius:8px; font-size:12.5px; font-weight:700; color:var(--ink-soft); }
+
+  .result-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:22px; }
+  .result-card{ background:var(--white); border:1px solid var(--line); border-radius:var(--radius-m); overflow:hidden; }
+  .result-thumb{ height:150px; background:linear-gradient(135deg,#4A76A0,#1B3A5C); position:relative; }
+  .result-thumb .kind{ position:absolute; top:10px; left:10px; background:rgba(18,35,61,.7); color:var(--white); font-size:11px; font-weight:700; padding:4px 10px; border-radius:100px; }
+  .result-body{ padding:16px; }
+  .result-body h4{ font-size:15.5px; font-family:var(--f-body); font-weight:700; }
+  .result-body .loc{ font-size:12.5px; color:var(--ink-soft); margin-top:3px; }
+  .result-foot{ display:flex; justify-content:space-between; align-items:center; margin-top:12px; }
+  .result-foot .price{ font-weight:800; font-size:14.5px; }
+  .result-foot .price span{ font-weight:500; font-size:12px; color:var(--ink-soft); }
+
+  .results-head-row{ display:flex; justify-content:space-between; align-items:center; }
+  .sort-select{ border:1.5px solid var(--line); border-radius:100px; padding:9px 16px; font-size:13.5px; font-weight:700; background:var(--white); }
+
+  @media (max-width:980px){
+    .results-shell{ grid-template-columns:1fr; }
+    .result-grid{ grid-template-columns:repeat(2,1fr); }
+  }
+  @media (max-width:600px){ .result-grid{ grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="brand"><span class="mark">V</span>Voyage</a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="search-results.html" class="active">Explore</a>
+      <a href="destination-details.html">Destinations</a>
+      <a href="dashboard.html">Dashboard</a>
+    </div>
+    <div class="nav-actions">
+      <a href="login.html" class="btn btn-ghost btn-sm">Log in</a>
+      <a href="signup.html" class="btn btn-primary btn-sm">Sign up</a>
+    </div>
+  </div>
+</nav>
+
+<header class="results-bar">
+  <div class="container">
+    <span class="eyebrow" style="color:#F0906B;">Search results</span>
+    <h1>Kyoto, Japan</h1>
+    <p class="sub">128 results · Cities, places, hotels & restaurants matching "Kyoto"</p>
+    <div class="search-mini">
+      <span>🔍</span>
+      <input type="text" value="Kyoto, Japan">
+      <button class="btn btn-primary btn-sm">Search</button>
+    </div>
+  </div>
+</header>
+
+<main class="container">
+  <div class="type-tabs">
+    <div class="type-tab active">All <span class="count">128</span></div>
+    <div class="type-tab">🏙 Cities <span class="count">4</span></div>
+    <div class="type-tab">📍 Places of interest <span class="count">36</span></div>
+    <div class="type-tab">🏨 Hotels <span class="count">52</span></div>
+    <div class="type-tab">🍽 Restaurants <span class="count">36</span></div>
+  </div>
+
+  <div class="results-shell">
+    <aside>
+      <div class="filter-group">
+        <h5>Price range</h5>
+        <div class="price-range"><span>$0</span><input type="range" min="0" max="1000"><span>$1000</span></div>
+      </div>
+      <div class="filter-group">
+        <h5>Type</h5>
+        <div class="filter-opt"><label><input type="checkbox" checked> Cities</label><span>4</span></div>
+        <div class="filter-opt"><label><input type="checkbox" checked> Places of interest</label><span>36</span></div>
+        <div class="filter-opt"><label><input type="checkbox" checked> Hotels</label><span>52</span></div>
+        <div class="filter-opt"><label><input type="checkbox" checked> Restaurants</label><span>36</span></div>
+      </div>
+      <div class="filter-group">
+        <h5>Rating</h5>
+        <div class="star-filter"><span>3.5+</span><span>4.0+</span><span>4.5+</span></div>
+      </div>
+      <div class="filter-group">
+        <h5>Amenities</h5>
+        <div class="filter-opt"><label><input type="checkbox"> Near metro</label></div>
+        <div class="filter-opt"><label><input type="checkbox"> Family friendly</label></div>
+        <div class="filter-opt"><label><input type="checkbox"> Free cancellation</label></div>
+        <div class="filter-opt"><label><input type="checkbox"> Visa-free entry</label></div>
+      </div>
+      <button class="btn btn-ghost btn-block btn-sm">Reset filters</button>
+    </aside>
+
+    <section>
+      <div class="results-head-row">
+        <p style="font-size:13.5px; color:var(--ink-soft);">Showing 1–9 of 128</p>
+        <select class="sort-select"><option>Sort: Recommended</option><option>Price: Low to high</option><option>Rating: High to low</option></select>
+      </div>
+
+      <div class="result-grid" style="margin-top:20px;">
+        <a class="result-card" href="destination-details.html"><div class="result-thumb"><span class="kind">City</span></div><div class="result-body"><h4>Kyoto</h4><p class="loc">Kansai region, Japan</p><div class="result-foot"><span class="rating">★ 4.8 <span style="color:var(--ink-soft); font-weight:500;">(2.1k)</span></span></div></div></a>
+
+        <a class="result-card" href="destination-details.html"><div class="result-thumb"><span class="kind">Place</span></div><div class="result-body"><h4>Fushimi Inari Shrine</h4><p class="loc">Fushimi Ward · Places of interest</p><div class="result-foot"><span class="rating">★ 4.9 <span style="color:var(--ink-soft); font-weight:500;">(9.4k)</span></span></div></div></a>
+
+        <a class="result-card" href="destination-details.html"><div class="result-thumb"><span class="kind">Hotel</span></div><div class="result-body"><h4>The Ritz-Carlton Kyoto</h4><p class="loc">Nakagyo Ward · Hotel</p><div class="result-foot"><span class="price">$420<span>/night</span></span><span class="rating">★ 4.9</span></div></div></a>
+
+        <a class="result-card" href="destination-details.html"><div class="result-thumb"><span class="kind">Restaurant</span></div><div class="result-body"><h4>Kikunoi Honten</h4><p class="loc">Higashiyama · Kaiseki dining</p><div class="result-foot"><span class="price">$$$$</span><span class="rating">★ 4.8</span></div></div></a>
+
+        <a class="result-card" href="destination-details.html"><div class="result-thumb"><span class="kind">Place</span></div><div class="result-body"><h4>Arashiyama Bamboo Grove</h4><p class="loc">Arashiyama · Places of interest</p><div class="result-foot"><span class="rating">★ 4.7 <span style="color:var(--ink-soft); font-weight:500;">(6.2k)</span></span></div></div></a>
+
+        <a class="result-card" href="destination-details.html"><div class="result-thumb"><span class="kind">Hotel</span></div><div class="result-body"><h4>Hyatt Regency Kyoto</h4><p class="loc">Higashiyama Ward · Hotel</p><div class="result-foot"><span class="price">$210<span>/night</span></span><span class="rating">★ 4.6</span></div></div></a>
+
+        <a class="result-card" href="destination-details.html"><div class="result-thumb"><span class="kind">Restaurant</span></div><div class="result-body"><h4>Nishiki Market Eateries</h4><p class="loc">Nakagyo · Street food</p><div class="result-foot"><span class="price">$</span><span class="rating">★ 4.5</span></div></div></a>
+
+        <a class="result-card" href="destination-details.html"><div class="result-thumb"><span class="kind">Place</span></div><div class="result-body"><h4>Kinkaku-ji (Golden Pavilion)</h4><p class="loc">Kita Ward · Places of interest</p><div class="result-foot"><span class="rating">★ 4.8 <span style="color:var(--ink-soft); font-weight:500;">(8.1k)</span></span></div></div></a>
+
+        <a class="result-card" href="destination-details.html"><div class="result-thumb"><span class="kind">Hotel</span></div><div class="result-body"><h4>Kyoto Family Ryokan</h4><p class="loc">Higashiyama · Family friendly</p><div class="result-foot"><span class="price">$140<span>/night</span></span><span class="rating">★ 4.7</span></div></div></a>
+      </div>
+
+      <div style="display:flex; justify-content:center; margin-top:40px;">
+        <button class="btn btn-ghost">Load more results</button>
+      </div>
+    </section>
+  </div>
+</main>
+</body>
+</html>

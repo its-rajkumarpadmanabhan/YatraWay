@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Voyage — Plan trips your whole family can use</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="assets/styles.css">
+<style>
+  .hero{
+    position:relative; overflow:hidden;
+    background:radial-gradient(120% 100% at 80% 0%, #1B3A5C 0%, var(--ink) 55%, #0D1826 100%);
+    color:var(--white); padding:120px 0 0;
+  }
+  .hero-grid{ display:grid; grid-template-columns:1.05fr .95fr; gap:40px; align-items:center; }
+  .hero h1{ font-size:clamp(38px,5vw,60px); line-height:1.04; font-weight:600; }
+  .hero h1 em{ font-style:italic; color:var(--coral); font-weight:500; }
+  .hero p.lede{ font-size:17px; color:rgba(255,255,255,.68); max-width:440px; margin-top:20px; }
+  .hero-cta{ display:flex; gap:14px; margin-top:34px; flex-wrap:wrap; }
+  .hero-stats{ display:flex; gap:34px; margin-top:52px; }
+  .hero-stats div strong{ display:block; font-family:var(--f-display); font-size:26px; }
+  .hero-stats div span{ font-size:12.5px; color:rgba(255,255,255,.55); }
+
+  .hero-art{ position:relative; height:440px; }
+  .hero-photo{
+    position:absolute; inset:0; border-radius:26px; overflow:hidden;
+    background:linear-gradient(160deg,#3E6B8F,#1B3A5C);
+  }
+  .hero-photo svg{ width:100%; height:100%; }
+  .float-card{
+    position:absolute; background:var(--white); color:var(--ink);
+    border-radius:var(--radius-m); padding:14px 16px; box-shadow:0 24px 40px -18px rgba(0,0,0,.4);
+    display:flex; align-items:center; gap:12px; font-size:13px;
+  }
+  .float-card.f1{ top:24px; left:-30px; }
+  .float-card.f2{ bottom:30px; right:-24px; }
+  .float-card .dot{ width:38px; height:38px; border-radius:50%; background:var(--teal-soft); color:var(--teal); display:flex; align-items:center; justify-content:center; font-size:17px; }
+
+  /* search panel */
+  .search-panel{
+    background:var(--white); border-radius:var(--radius-l); box-shadow:0 34px 70px -30px rgba(18,35,61,.4);
+    padding:26px; margin-top:70px; position:relative; z-index:5;
+    display:grid; grid-template-columns:repeat(4,1fr) auto; gap:16px; align-items:end;
+    border:1px solid var(--line);
+  }
+  .search-tabs{ display:flex; gap:6px; margin-bottom:-52px; }
+  .search-tab{
+    background:var(--white); color:var(--ink-soft); font-weight:700; font-size:13.5px;
+    padding:12px 20px 26px; border-radius:12px 12px 0 0; border:1px solid var(--line); border-bottom:none;
+    display:flex; align-items:center; gap:7px;
+  }
+  .search-tab.active{ color:var(--ink); background:var(--white); box-shadow:0 -10px 20px -18px rgba(0,0,0,.3); }
+
+  .destinations-grid{
+    display:grid; grid-template-columns:repeat(5,1fr); gap:18px;
+  }
+  .dest-card{
+    position:relative; border-radius:var(--radius-m); overflow:hidden; height:280px;
+    color:var(--white); background:linear-gradient(180deg, transparent 40%, rgba(10,18,30,.88) 100%), linear-gradient(150deg,#5A7C99,#233F5C);
+    display:flex; flex-direction:column; justify-content:flex-end; padding:16px;
+    transition:transform .3s var(--ease);
+  }
+  .dest-card:hover{ transform:translateY(-6px); }
+  .dest-card .save-badge{
+    position:absolute; top:14px; left:14px; background:var(--coral); color:var(--white);
+    font-family:var(--f-mono); font-size:11px; font-weight:600; padding:5px 10px; border-radius:100px;
+  }
+  .dest-card h4{ font-size:19px; }
+  .dest-card .meta{ display:flex; justify-content:space-between; align-items:center; margin-top:6px; font-size:12.5px; color:rgba(255,255,255,.8); }
+
+  .promo-strip{
+    background:linear-gradient(120deg,var(--teal) 0%, #1F6B5C 100%); color:var(--white);
+    border-radius:var(--radius-l); padding:44px; display:flex; justify-content:space-between; align-items:center; gap:30px;
+  }
+  .promo-strip h3{ font-size:26px; max-width:420px; }
+
+  .trust-row{ display:grid; grid-template-columns:repeat(4,1fr); gap:20px; }
+  .trust-item{ display:flex; gap:14px; align-items:flex-start; padding:22px; border:1px solid var(--line); border-radius:var(--radius-m); background:var(--white); }
+  .trust-item .ic{ width:42px; height:42px; border-radius:10px; background:var(--paper-2); display:flex; align-items:center; justify-content:center; font-size:19px; flex-shrink:0; }
+  .trust-item h5{ font-size:14.5px; margin-bottom:4px; font-family:var(--f-body); }
+  .trust-item p{ font-size:13px; color:var(--ink-soft); }
+
+  @media (max-width:980px){
+    .hero-grid{ grid-template-columns:1fr; }
+    .hero-art{ display:none; }
+    .search-panel{ grid-template-columns:1fr 1fr; margin-top:32px; }
+    .search-tabs{ display:none; }
+    .destinations-grid{ grid-template-columns:repeat(2,1fr); }
+    .trust-row{ grid-template-columns:1fr 1fr; }
+    .promo-strip{ flex-direction:column; text-align:center; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="brand"><span class="mark">V</span>Voyage</a>
+    <div class="nav-links">
+      <a href="index.html" class="active">Home</a>
+      <a href="search-results.html">Explore</a>
+      <a href="destination-details.html">Destinations</a>
+      <a href="#">Trips</a>
+      <a href="#">About</a>
+    </div>
+    <div class="nav-actions">
+      <a href="login.html" class="btn btn-ghost btn-sm">Log in</a>
+      <a href="signup.html" class="btn btn-primary btn-sm">Sign up</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="container">
+    <div class="hero-grid">
+      <div>
+        <span class="eyebrow">Family-ready travel planning</span>
+        <h1 style="margin-top:14px;">Where to next, <em>together?</em></h1>
+        <p class="lede">Search any city, country, or landmark and get transit routes, family-friendly stays, and passport requirements bundled into one trip.</p>
+        <div class="hero-cta">
+          <a href="search-results.html" class="btn btn-primary">Start exploring →</a>
+          <a href="#popular" class="btn btn-outline-light">See popular trips</a>
+        </div>
+        <div class="hero-stats">
+          <div><strong>128</strong><span>Countries covered</span></div>
+          <div><strong>40k+</strong><span>Family trips planned</span></div>
+          <div><strong>4.9★</strong><span>Traveler rating</span></div>
+        </div>
+      </div>
+      <div class="hero-art">
+        <div class="hero-photo">
+          <svg viewBox="0 0 500 500" preserveAspectRatio="xMidYMid slice">
+            <defs>
+              <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#4A76A0"/>
+                <stop offset="100%" stop-color="#1B3A5C"/>
+              </linearGradient>
+            </defs>
+            <rect width="500" height="500" fill="url(#sky)"/>
+            <polygon points="0,340 120,220 200,320 280,190 380,330 500,260 500,500 0,500" fill="#12233D" opacity="0.9"/>
+            <polygon points="0,380 150,290 260,370 400,280 500,340 500,500 0,500" fill="#0D1826"/>
+            <circle cx="390" cy="110" r="46" fill="#F1C879" opacity="0.9"/>
+            <g opacity="0.5" stroke="#F7F3EA" stroke-width="2" fill="none">
+              <path d="M60 150 Q120 90 220 130 T400 150" stroke-dasharray="4 8"/>
+            </g>
+          </svg>
+        </div>
+        <div class="float-card f1"><div class="dot">✓</div><div><strong>Passport check</strong><br>No visa needed for 2 travelers</div></div>
+        <div class="float-card f2"><div class="dot">🚄</div><div><strong>Metro 6 min</strong><br>from your hotel</div></div>
+      </div>
+    </div>
+
+    <div class="search-tabs">
+      <div class="search-tab active">🌍 Explore</div>
+      <div class="search-tab">✈ Flights</div>
+      <div class="search-tab">🏨 Stays</div>
+    </div>
+    <div class="search-panel">
+      <div class="field">
+        <label>Country / State / City</label>
+        <input type="text" placeholder="e.g. Kyoto, Japan">
+      </div>
+      <div class="field">
+        <label>Check-in</label>
+        <input type="date">
+      </div>
+      <div class="field">
+        <label>Check-out</label>
+        <input type="date">
+      </div>
+      <div class="field">
+        <label>Travelers</label>
+        <select><option>2 Adults, 1 Child</option><option>1 Adult</option><option>Add family group</option></select>
+      </div>
+      <a href="search-results.html" class="btn btn-primary" style="height:48px;">Search</a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="section" id="popular">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">Curated for this month</span>
+          <h2>Popular destinations</h2>
+        </div>
+        <a href="search-results.html" class="more">View all destinations →</a>
+      </div>
+      <div class="destinations-grid">
+        <a class="dest-card" href="destination-details.html"><span class="save-badge">-20%</span><h4>Kyoto, Japan</h4><div class="meta"><span>3 airports nearby</span><span class="rating">★ 4.8</span></div></a>
+        <a class="dest-card" href="destination-details.html"><span class="save-badge">Visa-free</span><h4>Lisbon, Portugal</h4><div class="meta"><span>Metro city</span><span class="rating">★ 4.7</span></div></a>
+        <a class="dest-card" href="destination-details.html"><h4>Queenstown, NZ</h4><div class="meta"><span>Family favorite</span><span class="rating">★ 4.9</span></div></a>
+        <a class="dest-card" href="destination-details.html"><span class="save-badge">-15%</span><h4>Marrakech, Morocco</h4><div class="meta"><span>Visa on arrival</span><span class="rating">★ 4.6</span></div></a>
+        <a class="dest-card" href="destination-details.html"><h4>Banff, Canada</h4><div class="meta"><span>Rail accessible</span><span class="rating">★ 4.8</span></div></a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-tight">
+    <div class="container">
+      <div class="promo-strip">
+        <div>
+          <span class="eyebrow" style="color:#CFEFE5;">For groups of 4+</span>
+          <h3 style="margin-top:10px;">Traveling with family? We match passport rules to every person on the trip automatically.</h3>
+        </div>
+        <a href="signup.html" class="btn" style="background:var(--white); color:var(--teal); font-weight:800;">Add your family →</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-tight">
+    <div class="container">
+      <div class="trust-row">
+        <div class="trust-item"><div class="ic">🛂</div><div><h5>Passport-aware</h5><p>We flag which travelers need a visa before you book.</p></div></div>
+        <div class="trust-item"><div class="ic">🧭</div><div><h5>Transit built in</h5><p>Nearest airport, rail, and metro shown on every listing.</p></div></div>
+        <div class="trust-item"><div class="ic">👨‍👩‍👧</div><div><h5>Family profiles</h5><p>Save every member once, reuse them on every trip.</p></div></div>
+        <div class="trust-item"><div class="ic">🔒</div><div><h5>Secure checkout</h5><p>Encrypted payments with instant confirmation.</p></div></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="container" style="display:grid; grid-template-columns:1.4fr 1fr 1fr 1fr; gap:32px;">
+    <div>
+      <a href="index.html" class="brand" style="color:var(--white);"><span class="mark">V</span>Voyage</a>
+      <p style="margin-top:14px; font-size:13.5px; max-width:260px; color:rgba(255,255,255,.55);">Trip planning that accounts for every passport in your family.</p>
+    </div>
+    <div><h4>Product</h4><ul><li><a href="index.html">Home</a></li><li><a href="search-results.html">Explore</a></li><li><a href="destination-details.html">Destinations</a></li></ul></div>
+    <div><h4>Account</h4><ul><li><a href="login.html">Log in</a></li><li><a href="signup.html">Sign up</a></li><li><a href="dashboard.html">Dashboard</a></li></ul></div>
+    <div><h4>Support</h4><ul><li><a href="#">Help center</a></li><li><a href="#">Contact us</a></li><li><a href="#">Terms</a></li></ul></div>
+  </div>
+  <div class="container footer-bottom">
+    <span>© 2026 Voyage. All rights reserved.</span>
+    <span>Made for families who plan together.</span>
+  </div>
+</footer>
+
+</body>
+</html>

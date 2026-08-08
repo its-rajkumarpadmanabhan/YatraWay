@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Kyoto, Japan — Voyage</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="assets/styles.css">
+<style>
+  .dest-hero{
+    height:400px; position:relative; color:var(--white);
+    background:linear-gradient(180deg, rgba(13,24,38,.15) 0%, rgba(13,24,38,.9) 100%), linear-gradient(135deg,#5A7C99,#233F5C);
+    display:flex; align-items:flex-end;
+  }
+  .dest-hero .container{ padding-bottom:34px; display:flex; justify-content:space-between; align-items:flex-end; gap:20px; flex-wrap:wrap; }
+  .dest-hero h1{ font-size:44px; }
+  .dest-hero .loc-line{ display:flex; gap:14px; align-items:center; margin-top:10px; font-size:14px; color:rgba(255,255,255,.8); }
+  .breadcrumb{ position:absolute; top:20px; left:0; right:0; font-size:13px; color:rgba(255,255,255,.75); }
+  .breadcrumb .container{ padding-bottom:0; }
+  .breadcrumb a{ color:rgba(255,255,255,.75); }
+  .breadcrumb a:hover{ color:var(--white); }
+
+  .dest-shell{ display:grid; grid-template-columns:1fr 340px; gap:40px; padding:48px 0 100px; }
+
+  .subhead{ display:flex; align-items:center; gap:10px; margin-bottom:18px; }
+  .subhead h2{ font-size:22px; }
+  .subhead .n{ width:30px; height:30px; border-radius:50%; background:var(--ink); color:var(--white); display:flex; align-items:center; justify-content:center; font-family:var(--f-mono); font-size:12.5px; }
+
+  .transit-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+  .transit-card{ border:1px solid var(--line); border-radius:var(--radius-m); padding:18px; background:var(--white); }
+  .transit-card .ic{ width:40px; height:40px; border-radius:10px; background:var(--paper-2); display:flex; align-items:center; justify-content:center; font-size:18px; margin-bottom:12px; }
+  .transit-card h5{ font-size:14.5px; font-family:var(--f-body); font-weight:700; }
+  .transit-card p{ font-size:13px; color:var(--ink-soft); margin-top:4px; }
+  .transit-card .dist{ font-family:var(--f-mono); font-size:12px; color:var(--teal); margin-top:8px; display:block; }
+
+  .ai-banner{
+    display:flex; align-items:center; gap:12px; background:linear-gradient(90deg,#EAF3EF,#F1EADA);
+    border:1px solid var(--line); border-radius:var(--radius-s); padding:12px 16px; margin-bottom:18px; font-size:13px; color:var(--ink-soft);
+  }
+  .ai-banner .badge{ background:var(--teal); color:var(--white); font-size:11px; font-weight:800; padding:4px 9px; border-radius:100px; font-family:var(--f-mono); }
+
+  .reco-scroll{ display:flex; gap:18px; overflow-x:auto; padding-bottom:8px; }
+  .reco-card{ min-width:230px; border:1px solid var(--line); border-radius:var(--radius-m); background:var(--white); overflow:hidden; flex-shrink:0; }
+  .reco-thumb{ height:120px; background:linear-gradient(135deg,#4A76A0,#1B3A5C); }
+  .reco-body{ padding:14px; }
+  .reco-body h5{ font-size:14px; font-family:var(--f-body); font-weight:700; }
+  .reco-body .meta{ display:flex; justify-content:space-between; font-size:12.5px; color:var(--ink-soft); margin-top:6px; }
+
+  .places-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:16px; }
+  .place-card{ display:flex; gap:14px; border:1px solid var(--line); border-radius:var(--radius-m); padding:14px; background:var(--white); }
+  .place-thumb{ width:76px; height:76px; border-radius:10px; background:linear-gradient(135deg,#6C8EA8,#2C4E71); flex-shrink:0; }
+  .place-card h5{ font-size:14.5px; font-family:var(--f-body); font-weight:700; }
+  .place-card p{ font-size:12.5px; color:var(--ink-soft); margin-top:4px; }
+
+  /* sidebar */
+  .side-sticky{ position:sticky; top:96px; display:flex; flex-direction:column; gap:20px; }
+  .book-card{ border:1px solid var(--line); border-radius:var(--radius-l); padding:22px; background:var(--white); box-shadow:0 20px 40px -28px rgba(18,35,61,.3); }
+  .book-card .price-line{ display:flex; align-items:baseline; gap:6px; margin-bottom:16px; }
+  .book-card .price-line strong{ font-family:var(--f-display); font-size:28px; }
+  .book-card .price-line span{ color:var(--ink-soft); font-size:13px; }
+
+  .visa-card{ border:1px solid var(--line); border-radius:var(--radius-m); padding:18px; background:var(--teal-soft); }
+  .visa-card h5{ font-size:14.5px; font-family:var(--f-body); font-weight:700; display:flex; align-items:center; gap:8px; }
+  .visa-card p{ font-size:13px; color:#1B5C4E; margin-top:6px; }
+
+  .weather-mini{ display:flex; justify-content:space-between; border:1px solid var(--line); border-radius:var(--radius-m); padding:16px; background:var(--white); font-size:13px; }
+  .weather-mini div{ text-align:center; }
+  .weather-mini strong{ display:block; font-family:var(--f-display); font-size:16px; }
+
+  @media (max-width:980px){
+    .dest-shell{ grid-template-columns:1fr; }
+    .transit-grid, .places-grid{ grid-template-columns:1fr; }
+    .side-sticky{ position:static; }
+  }
+</style>
+</head>
+<body>
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="brand"><span class="mark">V</span>Voyage</a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="search-results.html">Explore</a>
+      <a href="destination-details.html" class="active">Destinations</a>
+      <a href="dashboard.html">Dashboard</a>
+    </div>
+    <div class="nav-actions">
+      <a href="login.html" class="btn btn-ghost btn-sm">Log in</a>
+      <a href="signup.html" class="btn btn-primary btn-sm">Sign up</a>
+    </div>
+  </div>
+</nav>
+
+<header class="dest-hero">
+  <div class="breadcrumb"><div class="container"><a href="index.html">Home</a> / <a href="search-results.html">Explore</a> / Kyoto</div></div>
+  <div class="container">
+    <div>
+      <span class="eyebrow" style="color:#F0906B;">Japan · Kansai region</span>
+      <h1>Kyoto</h1>
+      <div class="loc-line">
+        <span class="rating" style="color:var(--white);">★ 4.8 (2,140 reviews)</span>
+        <span>·</span>
+        <span>Best time to visit: Mar–May</span>
+      </div>
+    </div>
+    <a href="booking-checkout.html" class="btn btn-primary">Book travel →</a>
+  </div>
+</header>
+
+<main class="container">
+  <div class="dest-shell">
+    <div>
+      <section style="margin-bottom:44px;">
+        <div class="subhead"><span class="n">1</span><h2>Getting there</h2></div>
+        <div class="transit-grid">
+          <div class="transit-card">
+            <div class="ic">✈️</div>
+            <h5>Nearest airport</h5>
+            <p>Kansai International (KIX)</p>
+            <span class="dist">52 km · ~75 min</span>
+          </div>
+          <div class="transit-card">
+            <div class="ic">🚄</div>
+            <h5>Railway station</h5>
+            <p>Kyoto Station (Shinkansen)</p>
+            <span class="dist">City center · ~10 min</span>
+          </div>
+          <div class="transit-card">
+            <div class="ic">🚇</div>
+            <h5>Nearest metro</h5>
+            <p>Karasuma Line — Shijo Sta.</p>
+            <span class="dist">0.4 km · ~5 min walk</span>
+          </div>
+        </div>
+      </section>
+
+      <section style="margin-bottom:44px;">
+        <div class="subhead"><span class="n">2</span><h2>Recommended stays</h2></div>
+        <div class="ai-banner"><span class="badge">AI matched</span> Ranked using your family size, budget, and stated preference for walkable neighborhoods.</div>
+        <div class="reco-scroll">
+          <div class="reco-card"><div class="reco-thumb"></div><div class="reco-body"><h5>The Ritz-Carlton Kyoto</h5><div class="meta"><span>$420/night</span><span class="rating">★ 4.9</span></div></div></div>
+          <div class="reco-card"><div class="reco-thumb"></div><div class="reco-body"><h5>Kyoto Family Ryokan</h5><div class="meta"><span>$140/night</span><span class="rating">★ 4.7</span></div></div></div>
+          <div class="reco-card"><div class="reco-thumb"></div><div class="reco-body"><h5>Hyatt Regency Kyoto</h5><div class="meta"><span>$210/night</span><span class="rating">★ 4.6</span></div></div></div>
+          <div class="reco-card"><div class="reco-thumb"></div><div class="reco-body"><h5>Gion Boutique Inn</h5><div class="meta"><span>$185/night</span><span class="rating">★ 4.8</span></div></div></div>
+        </div>
+      </section>
+
+      <section style="margin-bottom:44px;">
+        <div class="subhead"><span class="n">3</span><h2>Recommended restaurants</h2></div>
+        <div class="reco-scroll">
+          <div class="reco-card"><div class="reco-thumb"></div><div class="reco-body"><h5>Kikunoi Honten</h5><div class="meta"><span>Kaiseki · $$$$</span><span class="rating">★ 4.8</span></div></div></div>
+          <div class="reco-card"><div class="reco-thumb"></div><div class="reco-body"><h5>Nishiki Market Eateries</h5><div class="meta"><span>Street food · $</span><span class="rating">★ 4.5</span></div></div></div>
+          <div class="reco-card"><div class="reco-thumb"></div><div class="reco-body"><h5>Omen Kodaiji</h5><div class="meta"><span>Udon · $$</span><span class="rating">★ 4.7</span></div></div></div>
+        </div>
+      </section>
+
+      <section>
+        <div class="subhead"><span class="n">4</span><h2>Places to visit</h2></div>
+        <div class="places-grid">
+          <div class="place-card"><div class="place-thumb"></div><div><h5>Fushimi Inari Shrine</h5><p>Iconic torii gate paths through the mountainside.</p></div></div>
+          <div class="place-card"><div class="place-thumb"></div><div><h5>Arashiyama Bamboo Grove</h5><p>A quiet, towering bamboo forest walk.</p></div></div>
+          <div class="place-card"><div class="place-thumb"></div><div><h5>Kinkaku-ji</h5><p>The gold-leaf covered Golden Pavilion.</p></div></div>
+          <div class="place-card"><div class="place-thumb"></div><div><h5>Gion District</h5><p>Historic geisha quarter, best at dusk.</p></div></div>
+        </div>
+      </section>
+    </div>
+
+    <aside>
+      <div class="side-sticky">
+        <div class="book-card">
+          <div class="price-line"><strong>$1,240</strong><span>avg. per person / trip</span></div>
+          <a href="booking-checkout.html" class="btn btn-primary btn-block">Book travel →</a>
+          <p style="font-size:12px; color:var(--ink-soft); margin-top:10px; text-align:center;">Free cancellation up to 48 hours before departure</p>
+        </div>
+
+        <div class="visa-card">
+          <h5>🛂 Passport check</h5>
+          <p>Travelers from the US, UK, and most EU countries can enter Japan visa-free for up to 90 days.</p>
+        </div>
+
+        <div class="weather-mini">
+          <div><strong>18°C</strong>Today</div>
+          <div><strong>21°C</strong>Tomorrow</div>
+          <div><strong>19°C</strong>Wed</div>
+          <div><strong>17°C</strong>Thu</div>
+        </div>
+      </div>
+    </aside>
+  </div>
+</main>
+</body>
+</html>

@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Book your trip — Voyage</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="assets/styles.css">
+<style>
+  .booking-head{ background:var(--ink); color:var(--white); padding:30px 0; }
+  .booking-head h1{ font-size:24px; }
+  .booking-head .sub{ font-size:13.5px; color:rgba(255,255,255,.6); margin-top:4px; }
+
+  .stepper{ display:flex; gap:0; margin:28px 0 0; }
+  .step{ flex:1; display:flex; align-items:center; gap:10px; padding-bottom:14px; border-bottom:3px solid rgba(255,255,255,.15); position:relative; }
+  .step .num{ width:26px; height:26px; border-radius:50%; background:rgba(255,255,255,.12); color:rgba(255,255,255,.6); display:flex; align-items:center; justify-content:center; font-size:12.5px; font-weight:700; font-family:var(--f-mono); flex-shrink:0; }
+  .step span.label{ font-size:13px; font-weight:700; color:rgba(255,255,255,.55); }
+  .step.active .num{ background:var(--coral); color:var(--white); }
+  .step.active span.label{ color:var(--white); }
+  .step.active{ border-bottom-color:var(--coral); }
+  .step.done .num{ background:var(--teal); color:var(--white); }
+  .step.done span.label{ color:rgba(255,255,255,.85); }
+
+  .booking-shell{ display:grid; grid-template-columns:1fr 360px; gap:40px; padding:44px 0 100px; align-items:start; }
+
+  .step-panel{ display:none; }
+  .step-panel.active{ display:block; }
+
+  .panel-card{ background:var(--white); border:1px solid var(--line); border-radius:var(--radius-l); padding:30px; }
+  .panel-card h3{ font-size:19px; margin-bottom:6px; }
+  .panel-card .desc{ font-size:13.5px; color:var(--ink-soft); margin-bottom:24px; }
+
+  .traveler-list{ display:flex; flex-direction:column; gap:12px; margin-bottom:6px; }
+  .traveler-opt{
+    display:flex; align-items:center; gap:14px; border:1.5px solid var(--line); border-radius:var(--radius-m); padding:14px 16px;
+    cursor:pointer; transition:border-color .15s var(--ease), background .15s var(--ease);
+  }
+  .traveler-opt:has(input:checked){ border-color:var(--coral); background:#FCF3EF; }
+  .traveler-opt input{ width:18px; height:18px; accent-color:var(--coral); }
+  .traveler-opt .m-avatar{ width:38px; height:38px; border-radius:50%; background:var(--teal-soft); color:var(--teal); display:flex; align-items:center; justify-content:center; font-weight:700; font-family:var(--f-display); font-size:14px; }
+  .traveler-opt .m-info{ flex:1; }
+  .traveler-opt h5{ font-size:14.5px; font-family:var(--f-body); font-weight:700; }
+  .traveler-opt .m-meta{ font-size:12.5px; color:var(--ink-soft); }
+  .traveler-opt .flag{ font-family:var(--f-mono); font-size:11.5px; color:var(--ink-soft); }
+
+  .passport-block{
+    margin-top:26px; padding:20px; border-radius:var(--radius-m); border:1.5px dashed var(--coral);
+    background:#FCF3EF; display:none;
+  }
+  .passport-block.show{ display:block; }
+  .passport-block .flag-row{ display:flex; align-items:center; gap:10px; margin-bottom:16px; }
+  .passport-block .flag-row .badge{ background:var(--coral); color:var(--white); font-size:11px; font-weight:800; padding:4px 10px; border-radius:100px; font-family:var(--f-mono); }
+  .passport-entry{ border:1px solid var(--line); border-radius:var(--radius-s); padding:16px; background:var(--white); margin-bottom:12px; }
+  .passport-entry h6{ font-family:var(--f-body); font-size:13.5px; font-weight:700; margin-bottom:12px; display:flex; align-items:center; gap:8px; }
+  .passport-entry .field-grid{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+
+  .step-actions{ display:flex; justify-content:space-between; margin-top:26px; }
+
+  .pay-options{ display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:20px; }
+  .pay-opt{ border:1.5px solid var(--line); border-radius:var(--radius-s); padding:14px; text-align:center; font-weight:700; font-size:13px; cursor:pointer; }
+  .pay-opt.selected{ border-color:var(--ink); background:var(--paper-2); }
+
+  /* summary ticket */
+  .summary-sticky{ position:sticky; top:96px; }
+  .summary-ticket{ display:flex; }
+  .summary-main{ flex:1; padding:24px; }
+  .summary-stub{ width:100px; padding:24px 14px; background:var(--paper-2); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; }
+  .summary-stub .stamp{ width:56px; height:56px; font-size:9.5px; }
+  .summary-main h4{ font-size:16px; margin-bottom:4px; }
+  .summary-main .r-loc{ font-size:13px; color:var(--ink-soft); margin-bottom:18px; }
+  .summary-line{ display:flex; justify-content:space-between; font-size:13.5px; padding:9px 0; border-bottom:1px dashed var(--line); }
+  .summary-line.total{ border-bottom:none; padding-top:14px; font-weight:800; font-size:16px; }
+  .summary-line span:last-child{ font-weight:600; }
+
+  @media (max-width:980px){
+    .booking-shell{ grid-template-columns:1fr; }
+    .stepper{ overflow-x:auto; }
+    .step span.label{ white-space:nowrap; }
+    .traveler-opt .m-meta{ display:block; }
+    .passport-entry .field-grid{ grid-template-columns:1fr; }
+    .pay-options{ grid-template-columns:1fr; }
+  }
+</style>
+</head>
+<body>
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="brand"><span class="mark">V</span>Voyage</a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="search-results.html">Explore</a>
+      <a href="destination-details.html">Destinations</a>
+      <a href="dashboard.html">Dashboard</a>
+    </div>
+    <div class="nav-actions"><div class="avatar" style="width:38px;height:38px;font-size:13px;">AR</div></div>
+  </div>
+</nav>
+
+<header class="booking-head">
+  <div class="container">
+    <h1>Book your trip to Kyoto, Japan</h1>
+    <p class="sub">Complete the steps below — your progress is saved automatically.</p>
+    <div class="stepper">
+      <div class="step active" data-step="1"><span class="num">1</span><span class="label">Dates</span></div>
+      <div class="step" data-step="2"><span class="num">2</span><span class="label">Travelers</span></div>
+      <div class="step" data-step="3"><span class="num">3</span><span class="label">Passport info</span></div>
+      <div class="step" data-step="4"><span class="num">4</span><span class="label">Payment</span></div>
+    </div>
+  </div>
+</header>
+
+<main class="container">
+  <div class="booking-shell">
+    <div>
+
+      <!-- STEP 1: DATES -->
+      <div class="step-panel active" data-panel="1">
+        <div class="panel-card">
+          <h3>Choose your travel dates</h3>
+          <p class="desc">Prices update automatically based on the dates you select.</p>
+          <div class="field-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:18px;">
+            <div class="field"><label>Departure date</label><input type="date" value="2026-10-14"></div>
+            <div class="field"><label>Return date</label><input type="date" value="2026-10-21"></div>
+            <div class="field"><label>Departure city</label><input type="text" placeholder="e.g. New York (JFK)"></div>
+            <div class="field">
+              <label>Trip type</label>
+              <select><option>Round trip</option><option>One way</option><option>Multi-city</option></select>
+            </div>
+          </div>
+          <div class="step-actions"><span></span><button class="btn btn-primary" onclick="goStep(2)">Continue →</button></div>
+        </div>
+      </div>
+
+      <!-- STEP 2: TRAVELERS -->
+      <div class="step-panel" data-panel="2">
+        <div class="panel-card">
+          <h3>Who's traveling?</h3>
+          <p class="desc">Select family members joining this trip. Foreign destinations will ask for passport info in the next step.</p>
+          <div class="traveler-list">
+            <label class="traveler-opt"><input type="checkbox" checked onchange="updatePassportSection()" data-country="Italy" data-name="Amelia Rossi (You)"><div class="m-avatar">AR</div><div class="m-info"><h5>Amelia Rossi (You)</h5><span class="m-meta">Age 34 · Account holder</span></div><span class="flag">🇮🇹 Italy</span></label>
+            <label class="traveler-opt"><input type="checkbox" checked onchange="updatePassportSection()" data-country="Italy" data-name="Marco Bianchi"><div class="m-avatar">MB</div><div class="m-info"><h5>Marco Bianchi</h5><span class="m-meta">Age 45 · Spouse</span></div><span class="flag">🇮🇹 Italy</span></label>
+            <label class="traveler-opt"><input type="checkbox" onchange="updatePassportSection()" data-country="Italy" data-name="Luca Rossi"><div class="m-avatar">LR</div><div class="m-info"><h5>Luca Rossi</h5><span class="m-meta">Age 8 · Son</span></div><span class="flag">🇮🇹 Italy</span></label>
+            <label class="traveler-opt"><input type="checkbox" onchange="updatePassportSection()" data-country="USA" data-name="Giulia Rossi"><div class="m-avatar">GR</div><div class="m-info"><h5>Giulia Rossi</h5><span class="m-meta">Age 73 · Mother</span></div><span class="flag">🇺🇸 USA</span></label>
+          </div>
+          <button class="btn btn-ghost btn-sm" style="margin-top:6px;">+ Add a new family member</button>
+          <div class="step-actions"><button class="btn btn-ghost" onclick="goStep(1)">← Back</button><button class="btn btn-primary" onclick="goStep(3)">Continue →</button></div>
+        </div>
+      </div>
+
+      <!-- STEP 3: PASSPORT (dynamic) -->
+      <div class="step-panel" data-panel="3">
+        <div class="panel-card">
+          <h3>Travel document details</h3>
+          <p class="desc">Kyoto, Japan is outside every traveler's home country selected — passport details are required for entry.</p>
+
+          <div id="passportSection" class="passport-block show">
+            <div class="flag-row"><span class="badge">Passport required</span><span style="font-size:13px; color:var(--ink-soft);">Destination: Japan (foreign to all selected travelers)</span></div>
+            <div id="passportEntries"></div>
+          </div>
+
+          <div id="noPassportNote" style="display:none; padding:16px; border-radius:var(--radius-m); background:var(--teal-soft); font-size:13.5px; color:#1B5C4E;">
+            No travelers are selected yet — go back to the previous step to choose who's joining.
+          </div>
+
+          <div class="step-actions"><button class="btn btn-ghost" onclick="goStep(2)">← Back</button><button class="btn btn-primary" onclick="goStep(4)">Continue →</button></div>
+        </div>
+      </div>
+
+      <!-- STEP 4: PAYMENT -->
+      <div class="step-panel" data-panel="4">
+        <div class="panel-card">
+          <h3>Payment</h3>
+          <p class="desc">Your booking is confirmed instantly after payment.</p>
+          <div class="pay-options">
+            <div class="pay-opt selected">💳 Card</div>
+            <div class="pay-opt">🅿️ PayPal</div>
+            <div class="pay-opt">🍏 Apple Pay</div>
+          </div>
+          <div class="field-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+            <div class="field" style="grid-column:1/-1;"><label>Card number</label><input type="text" placeholder="1234 5678 9012 3456"></div>
+            <div class="field"><label>Expiry</label><input type="text" placeholder="MM/YY"></div>
+            <div class="field"><label>CVC</label><input type="text" placeholder="123"></div>
+            <div class="field" style="grid-column:1/-1;"><label>Name on card</label><input type="text" placeholder="Amelia Rossi"></div>
+          </div>
+          <label class="checkbox-row" style="margin-top:16px;"><input type="checkbox" checked> Send booking confirmation and passport reminders to my email</label>
+          <div class="step-actions"><button class="btn btn-ghost" onclick="goStep(3)">← Back</button><button class="btn btn-primary" onclick="alert('Booking confirmed! A ticket-stub confirmation has been emailed to you.')">Confirm & pay $2,480 →</button></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- SUMMARY SIDEBAR -->
+    <aside class="summary-sticky">
+      <div class="ticket summary-ticket">
+        <div class="summary-main">
+          <h4>Kyoto, Japan</h4>
+          <p class="r-loc">Oct 14 → Oct 21, 2026 · 7 nights</p>
+          <div class="summary-line"><span>Flights (2 adults)</span><span>$1,240</span></div>
+          <div class="summary-line"><span>Hotel · Gion Boutique Inn</span><span>$980</span></div>
+          <div class="summary-line"><span>Taxes & fees</span><span>$260</span></div>
+          <div class="summary-line total"><span>Total</span><span>$2,480</span></div>
+        </div>
+        <div class="perf-line"></div>
+        <div class="summary-stub">
+          <div class="stamp">Voyage<br>Boarding</div>
+          <span style="font-family:var(--f-mono); font-size:11px; color:var(--ink-soft); writing-mode:vertical-rl;">KYO · 2026</span>
+        </div>
+      </div>
+    </aside>
+  </div>
+</main>
+
+<script>
+  function goStep(n){
+    document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
+    document.querySelector('.step-panel[data-panel="'+n+'"]').classList.add('active');
+    document.querySelectorAll('.step').forEach(s => {
+      const step = parseInt(s.dataset.step);
+      s.classList.remove('active','done');
+      if(step === n) s.classList.add('active');
+      else if(step < n) s.classList.add('done');
+    });
+    if(n === 3) updatePassportSection();
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+
+  function updatePassportSection(){
+    const checked = Array.from(document.querySelectorAll('.traveler-opt input:checked'));
+    const wrap = document.getElementById('passportEntries');
+    const section = document.getElementById('passportSection');
+    const note = document.getElementById('noPassportNote');
+    wrap.innerHTML = '';
+
+    if(checked.length === 0){
+      section.classList.remove('show');
+      note.style.display = 'block';
+      return;
+    }
+    note.style.display = 'none';
+    section.classList.add('show');
+
+    checked.forEach((input, i) => {
+      const name = input.dataset.name;
+      const country = input.dataset.country;
+      const entry = document.createElement('div');
+      entry.className = 'passport-entry';
+      entry.innerHTML = `
+        <h6>🛂 ${name} <span class="tag-pill" style="margin-left:auto;">${country}</span></h6>
+        <div class="field-grid">
+          <div class="field"><label>Passport number</label><input type="text" placeholder="e.g. YA1234567"></div>
+          <div class="field"><label>Passport expiry date</label><input type="date"></div>
+        </div>`;
+      wrap.appendChild(entry);
+    });
+  }
+
+  updatePassportSection();
+</script>
+</body>
+</html>
