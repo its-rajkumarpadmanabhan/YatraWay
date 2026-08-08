@@ -7,10 +7,13 @@ import SearchResults from './pages/SearchResults';
 import DestinationDetails from './pages/DestinationDetails';
 import BookingCheckout from './pages/BookingCheckout';
 
+import { AuthProvider } from './context/AuthContext';
+
 function App() {
   return (
     <Router>
-      <Routes>
+      <AuthProvider>
+        <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/login" element={<Login />} />
@@ -20,7 +23,8 @@ function App() {
         <Route path="/destinations" element={<DestinationDetails />} />
         <Route path="/checkout" element={<BookingCheckout />} />
         {/* We will add other routes here as we build them */}
-      </Routes>
+        </Routes>
+      </AuthProvider>
     </Router>
   );
 }

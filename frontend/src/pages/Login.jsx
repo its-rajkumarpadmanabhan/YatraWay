@@ -1,8 +1,23 @@
-import React from 'react';
+import React, { useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
+import AuthContext from '../context/AuthContext';
 import './Auth.css';
 
 const Login = () => {
+  const { loginUser } = useContext(AuthContext);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    const success = await loginUser(email, password);
+    if (!success) {
+      setError('Invalid credentials, please try again.');
+    }
+  };
+
   return (
     <div className="auth-shell">
       <section className="auth-visual-login">
@@ -35,14 +50,16 @@ const Login = () => {
           <h1 style={{ marginTop: '12px' }}>Log in to Voyage</h1>
           <p className="sub">Pick up your trip planning where you left off.</p>
 
-          <form className="auth-form login-form">
+          <form className="auth-form login-form" onSubmit={handleSubmit}>
+            {error && <div style={{ color: 'var(--coral)', fontSize: '13px', fontWeight: 'bold' }}>{error}</div>}
+            
             <div className="field">
               <label htmlFor="email">Email or username</label>
-              <input id="email" type="text" placeholder="you@example.com" required />
+              <input id="email" type="text" placeholder="you@example.com" value={email} onChange={e => setEmail(e.target.value)} required />
             </div>
             <div className="field">
               <label htmlFor="password">Password</label>
-              <input id="password" type="password" placeholder="••••••••" required />
+              <input id="password" type="password" placeholder="••••••••" value={password} onChange={e => setPassword(e.target.value)} required />
             </div>
             <div className="row-between">
               <label className="checkbox-row"><input type="checkbox" /> Remember me</label>

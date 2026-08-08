@@ -1,8 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
+import AuthContext from '../context/AuthContext';
 import './Dashboard.css';
 
 const Dashboard = () => {
+  const { user, api, logoutUser } = useContext(AuthContext);
+  
+  // Try to load basic profile info if you have a me endpoint, otherwise use placeholder
   const [personalDetails, setPersonalDetails] = useState({
     firstName: 'Amelia',
     lastName: 'Rossi',
@@ -13,43 +17,55 @@ const Dashboard = () => {
     passportNumber: 'YA1234567'
   });
 
-  const [familyMembers, setFamilyMembers] = useState([
-    { id: 1, name: 'Luca Rossi', age: 8, relationship: 'Son', initials: 'LR', badgeInfo: '🇮🇹 Italy' },
-    { id: 2, name: 'Marco Bianchi', age: 45, relationship: 'Spouse', initials: 'MB', badgeInfo: '🇮🇹 Italy' },
-    { id: 3, name: 'Giulia Rossi', age: 73, relationship: 'Mother', initials: 'GR', badgeInfo: '🇺🇸 USA', badgeClass: 'coral' }
-  ]);
-
+  const [familyMembers, setFamilyMembers] = useState([]);
   const [isAddingMember, setIsAddingMember] = useState(false);
   const [newMember, setNewMember] = useState({ name: '', age: '', relationship: 'Spouse' });
+
+  // Fetch family members on mount
+  useEffect(() => {
+    const fetchFamily = async () => {
+      try {
+        const response = await api.get('/family/');
+        setFamilyMembers(response.data);
+      } catch (err) {
+        console.error("Error fetching family members", err);
+      }
+    };
+    fetchFamily();
+  }, [api]);
 
   const handlePersonalDetailsChange = (e) => {
     setPersonalDetails({ ...personalDetails, [e.target.name]: e.target.value });
   };
 
-  const handleAddMember = (e) => {
+  const handleAddMember = async (e) => {
     e.preventDefault();
     if (!newMember.name || !newMember.age) return;
     
-    const initials = newMember.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0,2);
-    
-    setFamilyMembers([
-      ...familyMembers, 
-      { 
-        id: Date.now(), 
-        name: newMember.name, 
-        age: parseInt(newMember.age), 
-        relationship: newMember.relationship, 
-        initials,
-        badgeInfo: `🇮🇹 ${personalDetails.homeCountry}` 
-      }
-    ]);
-    
-    setNewMember({ name: '', age: '', relationship: 'Spouse' });
-    setIsAddingMember(false);
+    try {
+      const payload = {
+        name: newMember.name,
+        age: parseInt(newMember.age),
+        relationship: newMember.relationship,
+      };
+      
+      const response = await api.post('/family/', payload);
+      setFamilyMembers([...familyMembers, response.data]);
+      
+      setNewMember({ name: '', age: '', relationship: 'Spouse' });
+      setIsAddingMember(false);
+    } catch (error) {
+      console.error("Error adding family member", error);
+    }
   };
 
-  const removeMember = (id) => {
-    setFamilyMembers(familyMembers.filter(m => m.id !== id));
+  const removeMember = async (id) => {
+    try {
+      await api.delete(`/family/${id}/`);
+      setFamilyMembers(familyMembers.filter(m => m.id !== id));
+    } catch (error) {
+      console.error("Error deleting family member", error);
+    }
   };
 
   return (
@@ -85,7 +101,7 @@ const Dashboard = () => {
             <a>🧳 My bookings</a>
             <a>🛂 Passport & documents</a>
             <a>⚙️ Settings</a>
-            <Link to="/">🚪 Log out</Link>
+            <a onClick={logoutUser}>🚪 Log out</a>
           </nav>
         </aside>
 
@@ -154,12 +170,12 @@ const Dashboard = () => {
             <div className="member-list">
               {familyMembers.map((member) => (
                 <div className="member-row" key={member.id}>
-                  <div className="m-avatar">{member.initials}</div>
+                  <div className="m-avatar">{member.name.substring(0, 2).toUpperCase()}</div>
                   <div className="m-info">
                     <h5>{member.name}</h5>
                     <div className="m-meta">
                       <span>Age {member.age}</span><span>·</span><span>{member.relationship}</span><span>·</span>
-                      <span className={`tag-pill ${member.badgeClass || ''}`}>{member.badgeInfo}</span>
+                      <span className="tag-pill">Family Member</span>
                     </div>
                   </div>
                   <div className="m-actions">
@@ -168,6 +184,7 @@ const Dashboard = () => {
                   </div>
                 </div>
               ))}
+              {familyMembers.length === 0 && <p style={{ fontSize: '13px', color: 'var(--ink-soft)' }}>No family members added yet.</p>}
             </div>
 
             <form className={`add-member-form ${isAddingMember ? 'open' : ''}`} onSubmit={handleAddMember}>

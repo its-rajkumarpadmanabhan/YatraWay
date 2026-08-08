@@ -1,8 +1,33 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useParams } from 'react-router-dom';
+import axios from 'axios';
 import './DestinationDetails.css';
 
 const DestinationDetails = () => {
+  const { id } = useParams();
+  const [destination, setDestination] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  // If no ID is provided, default to 1 (for the demo links)
+  const destId = id || 1;
+
+  useEffect(() => {
+    const fetchDest = async () => {
+      try {
+        const response = await axios.get(`http://localhost:8000/api/destinations/${destId}/`);
+        setDestination(response.data);
+      } catch (err) {
+        console.error("Error fetching destination", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchDest();
+  }, [destId]);
+
+  if (loading) return <div style={{ padding: '40px', textAlign: 'center' }}>Loading destination details...</div>;
+  if (!destination) return <div style={{ padding: '40px', textAlign: 'center' }}>Destination not found.</div>;
+
   return (
     <>
       <nav className="nav">
@@ -24,17 +49,17 @@ const DestinationDetails = () => {
       <header className="dest-hero">
         <div className="breadcrumb">
           <div className="container">
-            <Link to="/">Home</Link> / <Link to="/explore">Explore</Link> / Kyoto
+            <Link to="/">Home</Link> / <Link to="/explore">Explore</Link> / {destination.city}
           </div>
         </div>
         <div className="container">
           <div>
-            <span className="eyebrow" style={{ color: '#F0906B' }}>Japan · Kansai region</span>
-            <h1>Kyoto</h1>
+            <span className="eyebrow" style={{ color: '#F0906B' }}>{destination.country} · {destination.state}</span>
+            <h1>{destination.city}</h1>
             <div className="loc-line">
               <span className="rating" style={{ color: 'var(--white)' }}>★ 4.8 (2,140 reviews)</span>
               <span>·</span>
-              <span>Best time to visit: Mar–May</span>
+              <span>{destination.description || 'A beautiful place to visit.'}</span>
             </div>
           </div>
           <Link to="/checkout" className="btn btn-primary">Book travel →</Link>
@@ -50,107 +75,63 @@ const DestinationDetails = () => {
                 <div className="transit-card">
                   <div className="ic">✈️</div>
                   <h5>Nearest airport</h5>
-                  <p>Kansai International (KIX)</p>
-                  <span className="dist">52 km · ~75 min</span>
+                  <p>{destination.nearest_airport || 'N/A'}</p>
                 </div>
                 <div className="transit-card">
                   <div className="ic">🚄</div>
                   <h5>Railway station</h5>
-                  <p>Kyoto Station (Shinkansen)</p>
-                  <span className="dist">City center · ~10 min</span>
+                  <p>{destination.nearest_railway || 'N/A'}</p>
                 </div>
                 <div className="transit-card">
                   <div className="ic">🚇</div>
                   <h5>Nearest metro</h5>
-                  <p>Karasuma Line — Shijo Sta.</p>
-                  <span className="dist">0.4 km · ~5 min walk</span>
+                  <p>{destination.nearest_metro || 'N/A'}</p>
                 </div>
               </div>
             </section>
 
             <section style={{ marginBottom: '44px' }}>
               <div className="subhead"><span className="n">2</span><h2>Recommended stays</h2></div>
-              <div className="ai-banner">
-                <span className="badge">AI matched</span> Ranked using your family size, budget, and stated preference for walkable neighborhoods.
-              </div>
               <div className="reco-scroll">
-                <div className="reco-card">
-                  <div className="reco-thumb"></div>
-                  <div className="reco-body">
-                    <h5>The Ritz-Carlton Kyoto</h5>
-                    <div className="meta"><span>$420/night</span><span className="rating">★ 4.9</span></div>
+                {destination.accommodations && destination.accommodations.map(acc => (
+                  <div className="reco-card" key={acc.id}>
+                    <div className="reco-thumb"></div>
+                    <div className="reco-body">
+                      <h5>{acc.name}</h5>
+                      <div className="meta"><span>${acc.price_per_night}/night</span><span className="rating">★ {acc.rating}</span></div>
+                    </div>
                   </div>
-                </div>
-                <div className="reco-card">
-                  <div className="reco-thumb"></div>
-                  <div className="reco-body">
-                    <h5>Kyoto Family Ryokan</h5>
-                    <div className="meta"><span>$140/night</span><span className="rating">★ 4.7</span></div>
-                  </div>
-                </div>
-                <div className="reco-card">
-                  <div className="reco-thumb"></div>
-                  <div className="reco-body">
-                    <h5>Hyatt Regency Kyoto</h5>
-                    <div className="meta"><span>$210/night</span><span className="rating">★ 4.6</span></div>
-                  </div>
-                </div>
-                <div className="reco-card">
-                  <div className="reco-thumb"></div>
-                  <div className="reco-body">
-                    <h5>Gion Boutique Inn</h5>
-                    <div className="meta"><span>$185/night</span><span className="rating">★ 4.8</span></div>
-                  </div>
-                </div>
+                ))}
+                {(!destination.accommodations || destination.accommodations.length === 0) && <p>No accommodations listed.</p>}
               </div>
             </section>
 
             <section style={{ marginBottom: '44px' }}>
               <div className="subhead"><span className="n">3</span><h2>Recommended restaurants</h2></div>
               <div className="reco-scroll">
-                <div className="reco-card">
-                  <div className="reco-thumb"></div>
-                  <div className="reco-body">
-                    <h5>Kikunoi Honten</h5>
-                    <div className="meta"><span>Kaiseki · $$$$</span><span className="rating">★ 4.8</span></div>
+                {destination.restaurants && destination.restaurants.map(rest => (
+                  <div className="reco-card" key={rest.id}>
+                    <div className="reco-thumb"></div>
+                    <div className="reco-body">
+                      <h5>{rest.name}</h5>
+                      <div className="meta"><span>{rest.cuisine}</span><span className="rating">★ {rest.rating}</span></div>
+                    </div>
                   </div>
-                </div>
-                <div className="reco-card">
-                  <div className="reco-thumb"></div>
-                  <div className="reco-body">
-                    <h5>Nishiki Market Eateries</h5>
-                    <div className="meta"><span>Street food · $</span><span className="rating">★ 4.5</span></div>
-                  </div>
-                </div>
-                <div className="reco-card">
-                  <div className="reco-thumb"></div>
-                  <div className="reco-body">
-                    <h5>Omen Kodaiji</h5>
-                    <div className="meta"><span>Udon · $$</span><span className="rating">★ 4.7</span></div>
-                  </div>
-                </div>
+                ))}
+                {(!destination.restaurants || destination.restaurants.length === 0) && <p>No restaurants listed.</p>}
               </div>
             </section>
 
             <section>
               <div className="subhead"><span className="n">4</span><h2>Places to visit</h2></div>
               <div className="places-grid">
-                <div className="place-card">
-                  <div className="place-thumb"></div>
-                  <div><h5>Fushimi Inari Shrine</h5><p>Iconic torii gate paths through the mountainside.</p></div>
-                </div>
-                <div className="place-card">
-                  <div className="place-thumb"></div>
-                  <div><h5>Arashiyama Bamboo Grove</h5><p>A quiet, towering bamboo forest walk.</p></div>
-                </div>
-                <div className="place-card">
-                  <div className="place-thumb"></div>
-                  <div><h5>Kinkaku-ji</h5><p>The gold-leaf covered Golden Pavilion.</p></div>
-                </div>
-                <div className="place-card">
-                  <div className="place-thumb"></div>
-                  <div><h5>Gion District</h5><p>Historic geisha quarter, best at dusk.</p></div>
-                </div>
+                {destination.places && destination.places.map(place => (
+                  <div className="place-card" key={place.id}>
+                    <div className="place-thumb"></div>
+                    <div><h5>{place.name}</h5><p>{place.description}</p></div>
+                  </div>
+                ))}
+                {(!destination.places || destination.places.length === 0) && <p>No places listed.</p>}
               </div>
             </section>
           </div>
@@ -167,7 +148,7 @@ const DestinationDetails = () => {
 
               <div className="visa-card">
                 <h5>🛂 Passport check</h5>
-                <p>Travelers from the US, UK, and most EU countries can enter Japan visa-free for up to 90 days.</p>
+                <p>Travelers to {destination.country} might need a visa depending on their home country. Check passport requirements at checkout.</p>
               </div>
 
               <div className="weather-mini">

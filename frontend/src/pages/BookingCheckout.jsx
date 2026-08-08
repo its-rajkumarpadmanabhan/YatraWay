@@ -1,16 +1,35 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect, useContext } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import AuthContext from '../context/AuthContext';
 import './BookingCheckout.css';
 
 const BookingCheckout = () => {
+  const { user, api } = useContext(AuthContext);
+  const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(1);
-  const [selectedTravelers, setSelectedTravelers] = useState([
-    { id: 1, name: 'Amelia Rossi (You)', country: 'Italy', checked: true, age: 34, relation: 'Account holder', initials: 'AR' },
-    { id: 2, name: 'Marco Bianchi', country: 'Italy', checked: true, age: 45, relation: 'Spouse', initials: 'MB' },
-    { id: 3, name: 'Luca Rossi', country: 'Italy', checked: false, age: 8, relation: 'Son', initials: 'LR' },
-    { id: 4, name: 'Giulia Rossi', country: 'USA', checked: false, age: 73, relation: 'Mother', initials: 'GR' }
-  ]);
+  const [familyMembers, setFamilyMembers] = useState([]);
+  const [selectedTravelers, setSelectedTravelers] = useState({});
   const [paymentOption, setPaymentOption] = useState('card');
+  const [passportData, setPassportData] = useState({});
+  const [error, setError] = useState(null);
+
+  // Assuming booking destination 1 for this prototype
+  const destinationId = 1;
+  const destinationCountry = 'Japan'; // This should ideally be fetched from the backend
+
+  useEffect(() => {
+    const fetchFamily = async () => {
+      try {
+        const response = await api.get('/family/');
+        setFamilyMembers(response.data);
+      } catch (err) {
+        console.error("Error fetching family members", err);
+      }
+    };
+    if (user) {
+      fetchFamily();
+    }
+  }, [user, api]);
 
   const goStep = (n) => {
     setCurrentStep(n);
@@ -18,12 +37,36 @@ const BookingCheckout = () => {
   };
 
   const handleTravelerToggle = (id) => {
-    setSelectedTravelers(selectedTravelers.map(t => 
-      t.id === id ? { ...t, checked: !t.checked } : t
-    ));
+    setSelectedTravelers(prev => ({ ...prev, [id]: !prev[id] }));
   };
 
-  const activeTravelers = selectedTravelers.filter(t => t.checked);
+  const activeTravelers = familyMembers.filter(t => selectedTravelers[t.id]);
+
+  const handlePassportChange = (id, value) => {
+    setPassportData(prev => ({ ...prev, [id]: value }));
+  };
+
+  const handleCheckout = async () => {
+    // In a real app, we'd send the passport data and payment token
+    // For now, let's just trigger the booking endpoint.
+    try {
+      const payload = {
+        destination: destinationId,
+        family_members: activeTravelers.map(t => t.id),
+        start_date: '2026-10-14',
+        end_date: '2026-10-21',
+        // In the backend logic, passport_number might be required if destination is international
+        passport_number: passportData[activeTravelers[0]?.id] || 'YA1234567' 
+      };
+
+      await api.post('/bookings/', payload);
+      alert('Booking confirmed! A ticket-stub confirmation has been emailed to you.');
+      navigate('/dashboard');
+    } catch (err) {
+      console.error(err);
+      setError(err.response?.data?.passport_number || 'Booking failed.');
+    }
+  };
 
   return (
     <>
@@ -37,7 +80,7 @@ const BookingCheckout = () => {
             <Link to="/dashboard">Dashboard</Link>
           </div>
           <div className="nav-actions">
-            <div className="avatar" style={{ width: '38px', height: '38px', fontSize: '13px' }}>AR</div>
+            <div className="avatar" style={{ width: '38px', height: '38px', fontSize: '13px' }}>U</div>
           </div>
         </div>
       </nav>
@@ -91,17 +134,18 @@ const BookingCheckout = () => {
                 <h3>Who's traveling?</h3>
                 <p className="desc">Select family members joining this trip. Foreign destinations will ask for passport info in the next step.</p>
                 <div className="traveler-list">
-                  {selectedTravelers.map(t => (
+                  {familyMembers.map(t => (
                     <label className="traveler-opt" key={t.id}>
-                      <input type="checkbox" checked={t.checked} onChange={() => handleTravelerToggle(t.id)} />
-                      <div className="m-avatar">{t.initials}</div>
+                      <input type="checkbox" checked={selectedTravelers[t.id] || false} onChange={() => handleTravelerToggle(t.id)} />
+                      <div className="m-avatar">{t.name.substring(0, 2).toUpperCase()}</div>
                       <div className="m-info">
                         <h5>{t.name}</h5>
-                        <span className="m-meta">Age {t.age} · {t.relation}</span>
+                        <span className="m-meta">Age {t.age} · {t.relationship}</span>
                       </div>
-                      <span className="flag">{t.country === 'USA' ? '🇺🇸' : '🇮🇹'} {t.country}</span>
+                      <span className="flag">Family Member</span>
                     </label>
                   ))}
+                  {familyMembers.length === 0 && <p>No family members found. Add them in your dashboard!</p>}
                 </div>
                 <button className="btn btn-ghost btn-sm" style={{ marginTop: '6px' }}>+ Add a new family member</button>
                 <div className="step-actions">
@@ -115,19 +159,19 @@ const BookingCheckout = () => {
             <div className={`step-panel ${currentStep === 3 ? 'active' : ''}`} data-panel="3">
               <div className="panel-card">
                 <h3>Travel document details</h3>
-                <p className="desc">Kyoto, Japan is outside every traveler's home country selected — passport details are required for entry.</p>
+                <p className="desc">Kyoto, Japan may be outside your home country — passport details are required for entry.</p>
 
                 <div className={`passport-block ${activeTravelers.length > 0 ? 'show' : ''}`}>
                   <div className="flag-row">
-                    <span className="badge">Passport required</span>
-                    <span style={{ fontSize: '13px', color: 'var(--ink-soft)' }}>Destination: Japan (foreign to all selected travelers)</span>
+                    <span className="badge">Passport check</span>
+                    <span style={{ fontSize: '13px', color: 'var(--ink-soft)' }}>Destination: {destinationCountry}</span>
                   </div>
                   <div id="passportEntries">
                     {activeTravelers.map(t => (
                       <div className="passport-entry" key={t.id}>
-                        <h6>🛂 {t.name} <span className="tag-pill" style={{ marginLeft: 'auto' }}>{t.country}</span></h6>
+                        <h6>🛂 {t.name}</h6>
                         <div className="field-grid">
-                          <div className="field"><label>Passport number</label><input type="text" placeholder="e.g. YA1234567" /></div>
+                          <div className="field"><label>Passport number</label><input type="text" placeholder="e.g. YA1234567" value={passportData[t.id] || ''} onChange={e => handlePassportChange(t.id, e.target.value)} /></div>
                           <div className="field"><label>Passport expiry date</label><input type="date" /></div>
                         </div>
                       </div>
@@ -151,6 +195,8 @@ const BookingCheckout = () => {
               <div className="panel-card">
                 <h3>Payment</h3>
                 <p className="desc">Your booking is confirmed instantly after payment.</p>
+                {error && <div style={{ color: 'var(--coral)', marginBottom: '10px' }}><strong>Error:</strong> {error}</div>}
+                
                 <div className="pay-options">
                   <div className={`pay-opt ${paymentOption === 'card' ? 'selected' : ''}`} onClick={() => setPaymentOption('card')}>💳 Card</div>
                   <div className={`pay-opt ${paymentOption === 'paypal' ? 'selected' : ''}`} onClick={() => setPaymentOption('paypal')}>🅿️ PayPal</div>
@@ -167,7 +213,7 @@ const BookingCheckout = () => {
                 </label>
                 <div className="step-actions">
                   <button className="btn btn-ghost" onClick={() => goStep(3)}>← Back</button>
-                  <button className="btn btn-primary" onClick={() => alert('Booking confirmed! A ticket-stub confirmation has been emailed to you.')}>Confirm & pay $2,480 →</button>
+                  <button className="btn btn-primary" onClick={handleCheckout}>Confirm & pay $2,480 →</button>
                 </div>
               </div>
             </div>
@@ -180,7 +226,7 @@ const BookingCheckout = () => {
               <div className="summary-main">
                 <h4>Kyoto, Japan</h4>
                 <p className="r-loc">Oct 14 → Oct 21, 2026 · 7 nights</p>
-                <div className="summary-line"><span>Flights (2 adults)</span><span>$1,240</span></div>
+                <div className="summary-line"><span>Flights ({activeTravelers.length || 2} travelers)</span><span>$1,240</span></div>
                 <div className="summary-line"><span>Hotel · Gion Boutique Inn</span><span>$980</span></div>
                 <div className="summary-line"><span>Taxes & fees</span><span>$260</span></div>
                 <div className="summary-line total"><span>Total</span><span>$2,480</span></div>

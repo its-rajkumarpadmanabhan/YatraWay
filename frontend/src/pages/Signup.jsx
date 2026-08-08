@@ -1,8 +1,48 @@
-import React from 'react';
+import React, { useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
+import AuthContext from '../context/AuthContext';
 import './Auth.css';
 
 const Signup = () => {
+  const { registerUser } = useContext(AuthContext);
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+    homeCountry: ''
+  });
+  const [error, setError] = useState('');
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    
+    if (formData.password !== formData.confirmPassword) {
+      setError("Passwords do not match!");
+      return;
+    }
+
+    const payload = {
+      username: formData.email,
+      email: formData.email,
+      password: formData.password,
+      first_name: formData.firstName,
+      last_name: formData.lastName,
+      home_country: formData.homeCountry
+    };
+
+    const success = await registerUser(payload);
+    if (!success) {
+      setError('Registration failed. Email might already be in use.');
+    }
+  };
+
   return (
     <div className="auth-shell">
       <section className="auth-visual-signup">
@@ -34,48 +74,50 @@ const Signup = () => {
           <h1 style={{ marginTop: '12px' }}>Create your account</h1>
           <p className="sub">Takes about a minute — we'll use your home country to check visa requirements automatically.</p>
 
-          <form className="auth-form">
+          <form className="auth-form" onSubmit={handleSubmit}>
+            {error && <div style={{ color: 'var(--coral)', fontSize: '13px', fontWeight: 'bold' }}>{error}</div>}
+            
             <div className="field-row two">
               <div className="field">
                 <label htmlFor="fname">First name</label>
-                <input id="fname" type="text" placeholder="Amelia" required />
+                <input id="fname" name="firstName" type="text" placeholder="Amelia" value={formData.firstName} onChange={handleChange} required />
               </div>
               <div className="field">
                 <label htmlFor="lname">Last name</label>
-                <input id="lname" type="text" placeholder="Rossi" required />
+                <input id="lname" name="lastName" type="text" placeholder="Rossi" value={formData.lastName} onChange={handleChange} required />
               </div>
             </div>
 
             <div className="field">
               <label htmlFor="semail">Email</label>
-              <input id="semail" type="email" placeholder="you@example.com" required />
+              <input id="semail" name="email" type="email" placeholder="you@example.com" value={formData.email} onChange={handleChange} required />
             </div>
 
             <div className="field-row two">
               <div className="field">
                 <label htmlFor="spass">Password</label>
-                <input id="spass" type="password" placeholder="8+ characters" required />
+                <input id="spass" name="password" type="password" placeholder="8+ characters" value={formData.password} onChange={handleChange} required />
               </div>
               <div className="field">
                 <label htmlFor="spass2">Confirm password</label>
-                <input id="spass2" type="password" placeholder="Repeat password" required />
+                <input id="spass2" name="confirmPassword" type="password" placeholder="Repeat password" value={formData.confirmPassword} onChange={handleChange} required />
               </div>
             </div>
 
             <div className="field">
               <label htmlFor="homecountry">Home country <span style={{ color: 'var(--coral)' }}>*</span></label>
-              <select id="homecountry" required defaultValue="">
+              <select id="homecountry" name="homeCountry" required value={formData.homeCountry} onChange={handleChange}>
                 <option value="" disabled>Select your home country</option>
-                <option>United States</option>
-                <option>India</option>
-                <option>United Kingdom</option>
-                <option>Canada</option>
-                <option>Australia</option>
-                <option>Germany</option>
-                <option>Japan</option>
-                <option>Brazil</option>
-                <option>South Africa</option>
-                <option>Other</option>
+                <option value="United States">United States</option>
+                <option value="India">India</option>
+                <option value="United Kingdom">United Kingdom</option>
+                <option value="Canada">Canada</option>
+                <option value="Australia">Australia</option>
+                <option value="Germany">Germany</option>
+                <option value="Japan">Japan</option>
+                <option value="Brazil">Brazil</option>
+                <option value="South Africa">South Africa</option>
+                <option value="Other">Other</option>
               </select>
               <span className="hint">This is the country your passport is issued from.</span>
             </div>
