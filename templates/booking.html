@@ -1,0 +1,1315 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YatraWay — Book Your Flight</title>
+  <style>
+    :root {
+      --blue-deep: #0b3d91;
+      --blue: #1a56c4;
+      --blue-bright: #1e6fe0;
+      --blue-light: #eaf2ff;
+      --white: #ffffff;
+      --ink: #0e2a4d;
+      --ink-soft: #6b7690;
+      --gold: #f5b942;
+      --green: #1fa971;
+      --red: #e2554f;
+      --radius-lg: 20px;
+      --radius-md: 14px;
+      --radius-sm: 10px;
+      --shadow: 0 18px 40px -22px rgba(30, 70, 150, 0.28);
+      --font-display: 'Poppins', 'Segoe UI', sans-serif;
+      --font-body: 'Inter', 'Segoe UI', sans-serif;
+      --bg-grad: linear-gradient(120deg, #e7e6ff 0%, #eaf1ff 38%, #e8f8f2 100%);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: var(--font-body);
+      color: var(--ink);
+      background: var(--bg-grad);
+      background-attachment: fixed;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    img {
+      max-width: 100%;
+      display: block;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    ul {
+      list-style: none;
+    }
+
+    button,
+    input,
+    select {
+      font-family: inherit;
+    }
+
+    button {
+      cursor: pointer;
+      border: none;
+      background: none;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 32px;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4 {
+      font-family: var(--font-display);
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    /* ================= NAVBAR (matches main site) ================= */
+    .navbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 22px 0;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--blue-deep);
+    }
+
+    .brand .logo-mark {
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .brand-text .name {
+      font-family: var(--font-display);
+      font-size: 21px;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .brand-text .tagline {
+      font-size: 9.5px;
+      letter-spacing: 2px;
+      opacity: 0.65;
+      text-transform: uppercase;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+    }
+
+    .nav-links a {
+      color: var(--ink);
+      font-size: 14.5px;
+      font-weight: 500;
+      opacity: 0.8;
+      position: relative;
+      padding-bottom: 6px;
+    }
+
+    .nav-links a.active {
+      opacity: 1;
+      color: var(--blue);
+    }
+
+    .nav-links a.active::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 2px;
+      background: var(--blue);
+      border-radius: 2px;
+    }
+
+    .signin-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #fff;
+      background: var(--blue-bright);
+      padding: 10px 20px;
+      border-radius: 30px;
+      font-size: 14px;
+      font-weight: 600;
+      box-shadow: 0 10px 22px -10px rgba(30, 111, 224, 0.6);
+    }
+
+    .nav-toggle {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      padding: 6px;
+    }
+
+    .nav-toggle span {
+      width: 24px;
+      height: 2px;
+      background: var(--ink);
+      border-radius: 2px;
+    }
+
+    /* ================= PAGE HEADER ================= */
+    .page-head {
+      padding: 6px 0 26px;
+    }
+
+    .page-head h1 {
+      font-size: 26px;
+      color: var(--blue-deep);
+    }
+
+    .page-head p {
+      font-size: 14px;
+      color: var(--ink-soft);
+      margin-top: 6px;
+    }
+
+    /* ================= TRIP TYPE ================= */
+    .trip-type {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .trip-options {
+      display: flex;
+      gap: 26px;
+    }
+
+    .radio-opt {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--ink-soft);
+      cursor: pointer;
+    }
+
+    .radio-opt input {
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      border: 2px solid #c7cee0;
+      position: relative;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .radio-opt input:checked {
+      border-color: var(--blue-bright);
+    }
+
+    .radio-opt input:checked::after {
+      content: "";
+      position: absolute;
+      inset: 2px;
+      border-radius: 50%;
+      background: var(--blue-bright);
+    }
+
+    .radio-opt input:checked~span {
+      color: var(--ink);
+    }
+
+    .save-pref {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--gold);
+      background: #fff9ec;
+      border: 1px solid #f3e3bb;
+      padding: 8px 16px;
+      border-radius: 30px;
+    }
+
+    /* ================= SEARCH BAR ================= */
+    .search-card {
+      background: #fff;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+      padding: 26px 30px;
+      display: grid;
+      grid-template-columns: 1.5fr 1.5fr 1fr 1fr 1.1fr auto;
+      align-items: center;
+      gap: 0;
+      margin-bottom: 24px;
+    }
+
+    .s-field {
+      padding: 0 22px;
+      border-right: 1px solid #eef0f6;
+      position: relative;
+    }
+
+    .s-field:first-child {
+      padding-left: 0;
+    }
+
+    .s-field.route {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .s-field .eyebrow-sm {
+      font-size: 10.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: var(--ink-soft);
+      font-weight: 700;
+      margin-bottom: 5px;
+      display: block;
+    }
+
+    .s-field .main-val {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    .s-field .sub-val {
+      font-size: 11.5px;
+      color: var(--ink-soft);
+      margin-top: 2px;
+    }
+
+    .swap-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: var(--blue-light);
+      color: var(--blue);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .s-field:last-of-type {
+      border-right: none;
+    }
+
+    .search-btn {
+      background: var(--blue-bright);
+      color: #fff;
+      font-weight: 700;
+      font-size: 14.5px;
+      padding: 16px 30px;
+      border-radius: 12px;
+      margin-left: 16px;
+      white-space: nowrap;
+      box-shadow: 0 14px 26px -10px rgba(30, 111, 224, 0.55);
+      transition: background .2s ease;
+    }
+
+    .search-btn:hover {
+      background: var(--blue-deep);
+    }
+
+    /* ================= NEAREST DATES STRIP ================= */
+    .dates-strip {
+      background: #fff;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+      padding: 18px 26px;
+      display: flex;
+      align-items: center;
+      gap: 26px;
+      margin-bottom: 28px;
+      flex-wrap: wrap;
+    }
+
+    .dates-label {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--ink);
+      padding-right: 20px;
+      border-right: 1px solid #eef0f6;
+    }
+
+    .dates-label .cal-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      background: var(--blue-light);
+      color: var(--blue);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .dates-label small {
+      display: block;
+      font-weight: 600;
+      color: var(--blue);
+      font-size: 11.5px;
+      margin-top: 2px;
+      cursor: pointer;
+    }
+
+    .date-chips {
+      display: flex;
+      gap: 14px;
+      flex: 1;
+      flex-wrap: wrap;
+    }
+
+    .date-chip {
+      text-align: center;
+      font-size: 12px;
+      color: var(--ink-soft);
+      padding: 6px 4px;
+      border-radius: 10px;
+      min-width: 64px;
+    }
+
+    .date-chip .price {
+      display: block;
+      font-size: 14.5px;
+      font-weight: 800;
+      color: var(--green);
+      margin-bottom: 2px;
+    }
+
+    .date-chip.best {
+      background: var(--blue-light);
+    }
+
+    .date-chip.high .price {
+      color: var(--red);
+    }
+
+    .see-more {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--blue);
+      border: 1.5px solid var(--blue-light);
+      padding: 9px 18px;
+      border-radius: 30px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+
+    /* ================= MAIN LAYOUT ================= */
+    .results-layout {
+      display: grid;
+      grid-template-columns: 270px 1fr;
+      gap: 24px;
+      padding-bottom: 70px;
+      align-items: start;
+    }
+
+    /* ---- Filters sidebar ---- */
+    .filters {
+      background: #fff;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+      padding: 24px 22px;
+      position: sticky;
+      top: 20px;
+    }
+
+    .filter-block {
+      padding: 16px 0;
+      border-bottom: 1px solid #f0f2f8;
+    }
+
+    .filter-block:first-child {
+      padding-top: 0;
+    }
+
+    .filter-block:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .filter-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: 12px;
+    }
+
+    .clear-link {
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--blue);
+      cursor: pointer;
+    }
+
+    .filter-options {
+      display: flex;
+      flex-direction: column;
+      gap: 11px;
+    }
+
+    .check-opt,
+    .radio-opt2 {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      color: var(--ink-soft);
+      cursor: pointer;
+    }
+
+    .check-opt input,
+    .radio-opt2 input {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+      accent-color: var(--blue-bright);
+      cursor: pointer;
+    }
+
+    .price-range {
+      padding-top: 4px;
+    }
+
+    .price-range .track {
+      height: 4px;
+      background: #e7ecf5;
+      border-radius: 4px;
+      position: relative;
+      margin: 14px 0 8px;
+    }
+
+    .price-range .fill {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 32%;
+      background: var(--blue-bright);
+      border-radius: 4px;
+    }
+
+    .price-range .handle {
+      position: absolute;
+      top: 50%;
+      left: 32%;
+      width: 16px;
+      height: 16px;
+      background: #fff;
+      border: 3px solid var(--blue-bright);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    }
+
+    .price-range .range-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11.5px;
+      color: var(--ink-soft);
+      font-weight: 600;
+    }
+
+    .accordion-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 13px 0;
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--ink);
+      border-bottom: 1px solid #f0f2f8;
+      cursor: pointer;
+    }
+
+    .accordion-row:last-child {
+      border-bottom: none;
+    }
+
+    .accordion-row svg {
+      color: var(--ink-soft);
+      transition: transform .2s ease;
+    }
+
+    /* ---- Flight result cards ---- */
+    .results-col {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .results-count {
+      font-size: 13.5px;
+      color: var(--ink-soft);
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .results-count strong {
+      color: var(--ink);
+    }
+
+    .flight-card {
+      background: #fff;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+      padding: 22px 26px;
+      display: grid;
+      grid-template-columns: auto 1.6fr auto 1fr auto;
+      align-items: center;
+      gap: 22px;
+      transition: transform .2s ease, box-shadow .2s ease;
+    }
+
+    .flight-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 26px 46px -22px rgba(30, 70, 150, 0.35);
+    }
+
+    .airline {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 4px;
+    }
+
+    .airline .airline-mark {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 16px;
+      color: var(--blue-deep);
+      letter-spacing: 0.3px;
+    }
+
+    .airline .airline-mark svg {
+      color: var(--blue-bright);
+    }
+
+    .airline .airline-sub {
+      font-size: 10.5px;
+      color: var(--ink-soft);
+      font-weight: 600;
+    }
+
+    .route-block {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .route-point {
+      text-align: center;
+      min-width: 66px;
+    }
+
+    .route-point .time {
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--ink);
+    }
+
+    .route-point .code {
+      font-size: 11.5px;
+      color: var(--ink-soft);
+      font-weight: 700;
+      margin-top: 2px;
+    }
+
+    .route-point .day {
+      font-size: 10.5px;
+      color: var(--ink-soft);
+    }
+
+    .route-mid {
+      flex: 1;
+      text-align: center;
+      position: relative;
+      padding: 0 4px;
+    }
+
+    .route-mid .dur {
+      font-size: 11px;
+      color: var(--ink-soft);
+      margin-bottom: 5px;
+      font-weight: 600;
+    }
+
+    .route-line {
+      position: relative;
+      height: 2px;
+      background: #e2e7f2;
+      border-radius: 2px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .route-line::before,
+    .route-line::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #c7cee0;
+      transform: translateY(-50%);
+    }
+
+    .route-line::before {
+      left: 0;
+    }
+
+    .route-line::after {
+      right: 0;
+    }
+
+    .route-line .plane-icon {
+      background: #fff;
+      color: var(--blue);
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .route-mid .stop {
+      font-size: 10.5px;
+      color: var(--ink-soft);
+      margin-top: 5px;
+    }
+
+    .baggage {
+      display: flex;
+      gap: 10px;
+    }
+
+    .bag-chip {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      font-size: 9.5px;
+      color: var(--ink-soft);
+      font-weight: 700;
+    }
+
+    .bag-chip .bag-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      border: 1.5px solid #e5e9f2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--blue);
+    }
+
+    .price-buy {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      justify-self: end;
+    }
+
+    .price-tag {
+      font-size: 19px;
+      font-weight: 800;
+      color: var(--green);
+      white-space: nowrap;
+    }
+
+    .buy-btn {
+      background: var(--blue-bright);
+      color: #fff;
+      font-weight: 700;
+      font-size: 14px;
+      padding: 12px 26px;
+      border-radius: 10px;
+      box-shadow: 0 10px 20px -8px rgba(30, 111, 224, 0.55);
+      transition: background .2s ease;
+    }
+
+    .buy-btn:hover {
+      background: var(--blue-deep);
+    }
+
+    .load-more {
+      align-self: center;
+      margin-top: 6px;
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--blue);
+      background: #fff;
+      border: 1.5px solid var(--blue-light);
+      padding: 13px 30px;
+      border-radius: 30px;
+      box-shadow: var(--shadow);
+    }
+
+    /* ================= RESPONSIVE ================= */
+    @media (max-width:1080px) {
+      .results-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .filters {
+        position: static;
+      }
+    }
+
+    @media (max-width:900px) {
+      .nav-links {
+        position: fixed;
+        top: 0;
+        right: 0;
+        height: 100vh;
+        width: 260px;
+        background: var(--blue-deep);
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 100px 30px;
+        gap: 26px;
+        transform: translateX(100%);
+        transition: transform .3s ease;
+        z-index: 50;
+      }
+
+      .nav-links.open {
+        transform: translateX(0);
+      }
+
+      .nav-links a {
+        color: #fff;
+        opacity: 0.9;
+      }
+
+      .nav-links a.active {
+        color: #fff;
+      }
+
+      .nav-links a.active::after {
+        background: #fff;
+      }
+
+      .nav-toggle {
+        display: flex;
+      }
+
+      .signin-btn {
+        display: none;
+      }
+
+      .search-card {
+        grid-template-columns: 1fr 1fr;
+        row-gap: 18px;
+      }
+
+      .s-field {
+        border-right: none;
+        padding: 0;
+      }
+
+      .search-btn {
+        grid-column: 1/-1;
+        margin: 6px 0 0;
+      }
+
+      .flight-card {
+        grid-template-columns: 1fr;
+        text-align: left;
+        gap: 16px;
+      }
+
+      .price-buy {
+        justify-self: start;
+      }
+    }
+
+    @media (max-width:640px) {
+      .container {
+        padding: 0 18px;
+      }
+
+      .dates-strip {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .dates-label {
+        border-right: none;
+        padding-right: 0;
+      }
+
+      .date-chips {
+        width: 100%;
+        overflow-x: auto;
+      }
+
+      .baggage {
+        flex-wrap: wrap;
+      }
+
+      .route-block {
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header class="container">
+    <nav class="navbar">
+      <a href="index.html" class="brand">
+        <span class="logo-mark">
+          <svg width="32" height="32" viewBox="0 0 34 34" fill="none">
+            <path d="M31 3L3 15.5L15 18.5L18 30.5L31 3Z" fill="#1a56c4" />
+            <path d="M31 3L15 18.5L18 30.5L31 3Z" fill="#7fa6e8" />
+          </svg>
+        </span>
+        <span class="brand-text">
+          <span class="name">YatraWay</span>
+          <span class="tagline">Travel Around The World</span>
+        </span>
+      </a>
+
+      <button class="nav-toggle" id="navToggle"
+        aria-label="Toggle menu"><span></span><span></span><span></span></button>
+
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="index.html#packages">Packages</a></li>
+        <li><a href="index.html#destinations">Destinations</a></li>
+        <li><a href="booking.html" class="active">Bookings</a></li>
+        <li><a href="index.html#about-contact">About Us</a></li>
+        <li><a href="index.html#about-contact">Contact</a></li>
+      </ul>
+
+      <a href="#" class="signin-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="8" r="4" />
+          <path d="M4 20c0-4 4-6 8-6s8 2 8 6" />
+        </svg>
+        Sign In
+      </a>
+    </nav>
+  </header>
+
+  <main class="container">
+
+    <div class="page-head">
+      <h1>Book Your Flight</h1>
+      <p>Compare fares across airlines and lock in the best deal for your trip.</p>
+    </div>
+
+    <div class="trip-type">
+      <div class="trip-options">
+        <label class="radio-opt"><input type="radio" name="trip"><span>One way</span></label>
+        <label class="radio-opt"><input type="radio" name="trip" checked><span>Round trip</span></label>
+        <label class="radio-opt"><input type="radio" name="trip"><span>Multi-city trip</span></label>
+      </div>
+      <div class="save-pref">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.7 7-6.3-3.9-6.3 3.9 1.7-7-5.4-4.7 7.1-.6z" />
+        </svg>
+        Save your preference
+      </div>
+    </div>
+
+    <!-- SEARCH CARD -->
+    <div class="search-card">
+      <div class="s-field route">
+        <div>
+          <span class="eyebrow-sm">From</span>
+          <div class="main-val">Kiev Zhulyany</div>
+          <div class="sub-val">IEV · Igor Sikorsky Kyiv Intl Airport</div>
+        </div>
+        <span class="swap-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <path d="M17 3l4 4-4 4M21 7H9M7 21l-4-4 4-4M3 17h12" />
+          </svg>
+        </span>
+        <div>
+          <span class="eyebrow-sm">To</span>
+          <div class="main-val">Madrid</div>
+          <div class="sub-val">MAD · Aeropuerto Adolfo Suárez</div>
+        </div>
+      </div>
+      <div class="s-field">
+        <span class="eyebrow-sm">Departure</span>
+        <div class="main-val">Oct 20, 2021</div>
+        <div class="sub-val">Wednesday</div>
+      </div>
+      <div class="s-field">
+        <span class="eyebrow-sm">Return</span>
+        <div class="main-val">Oct 30, 2021</div>
+        <div class="sub-val">Wednesday</div>
+      </div>
+      <div class="s-field">
+        <span class="eyebrow-sm">Passengers &amp; Class</span>
+        <div class="main-val">4 Passengers</div>
+        <div class="sub-val">Comfort class</div>
+      </div>
+      <button class="search-btn">Search Flight</button>
+    </div>
+
+    <!-- NEAREST DATES -->
+    <div class="dates-strip">
+      <div class="dates-label">
+        <span class="cal-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="5" width="18" height="16" rx="2" />
+            <path d="M3 10h18M8 3v4M16 3v4" />
+          </svg>
+        </span>
+        <span>Prices for the nearest dates<br><small>I want to see a graph</small></span>
+      </div>
+      <div class="date-chips">
+        <div class="date-chip"><span class="price">210$</span>Oct 19, 2021<br>Tuesday</div>
+        <div class="date-chip best"><span class="price">210$</span>Oct 20, 2021<br>Wednesday</div>
+        <div class="date-chip"><span class="price">250$</span>Oct 21, 2021<br>Thursday</div>
+        <div class="date-chip"><span class="price">260$</span>Oct 22, 2021<br>Friday</div>
+        <div class="date-chip high"><span class="price">—$</span>Oct 23, 2021<br>Saturday</div>
+      </div>
+      <button class="see-more">See more
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3">
+          <path d="M9 6l6 6-6 6" />
+        </svg>
+      </button>
+    </div>
+
+    <!-- RESULTS LAYOUT -->
+    <div class="results-layout">
+
+      <!-- FILTERS SIDEBAR -->
+      <aside class="filters">
+        <div class="filter-block">
+          <div class="filter-title">Baggage <span class="clear-link">clear all</span></div>
+          <div class="filter-options">
+            <label class="radio-opt2"><input type="radio" name="bag"><span>0–10kg</span></label>
+            <label class="radio-opt2"><input type="radio" name="bag" checked><span>10–20kg</span></label>
+            <label class="radio-opt2"><input type="radio" name="bag"><span>20–35kg</span></label>
+            <label class="radio-opt2"><input type="radio" name="bag"><span>30+kg</span></label>
+          </div>
+        </div>
+
+        <div class="filter-block">
+          <div class="filter-title">Stopovers <span class="clear-link">clear</span></div>
+          <div class="filter-options">
+            <label class="radio-opt2"><input type="radio" name="stop"><span>One stop</span></label>
+            <label class="radio-opt2"><input type="radio" name="stop" checked><span>Two stops</span></label>
+            <label class="radio-opt2"><input type="radio" name="stop"><span>Three stops</span></label>
+            <label class="radio-opt2"><input type="radio" name="stop"><span>Non-stop</span></label>
+            <label class="check-opt"><input type="checkbox"><span>Allow overnight stopovers</span></label>
+          </div>
+        </div>
+
+        <div class="filter-block">
+          <div class="filter-title">Price range <span class="clear-link">clear</span></div>
+          <div class="price-range">
+            <div class="track">
+              <div class="fill"></div>
+              <div class="handle"></div>
+            </div>
+            <div class="range-labels"><span>0$</span><span>200$</span><span>1000$</span></div>
+          </div>
+        </div>
+
+        <div class="filter-block" style="padding-bottom:0;">
+          <div class="accordion-row">Duration
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3">
+              <path d="M6 9l6 6 6-6" />
+            </svg>
+          </div>
+          <div class="accordion-row">Great
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3">
+              <path d="M6 9l6 6 6-6" />
+            </svg>
+          </div>
+          <div class="accordion-row">Stopovers in
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3">
+              <path d="M6 9l6 6 6-6" />
+            </svg>
+          </div>
+          <div class="accordion-row">More filters
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3">
+              <path d="M6 9l6 6 6-6" />
+            </svg>
+          </div>
+          <div class="accordion-row">Aircraft type
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3">
+              <path d="M6 9l6 6 6-6" />
+            </svg>
+          </div>
+          <div class="accordion-row">Booking sites
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3">
+              <path d="M6 9l6 6 6-6" />
+            </svg>
+          </div>
+          <div class="accordion-row">Airline
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3">
+              <path d="M6 9l6 6 6-6" />
+            </svg>
+          </div>
+        </div>
+      </aside>
+
+      <!-- RESULTS -->
+      <section class="results-col">
+        <div class="results-count"><strong>4</strong> flights found from Kiev Zhulyany to Madrid</div>
+
+        <article class="flight-card">
+          <div class="airline">
+            <span class="airline-mark">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" />
+              </svg>
+              SkyBridge Air
+            </span>
+            <span class="airline-sub">Comfort class</span>
+          </div>
+          <div class="route-block">
+            <div class="route-point">
+              <div class="time">04:00pm</div>
+              <div class="code">IEV</div>
+              <div class="day">Oct 20, WED</div>
+            </div>
+            <div class="route-mid">
+              <div class="dur">5h 15m</div>
+              <div class="route-line"><span class="plane-icon"><svg width="14" height="14" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="2.3">
+                    <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" />
+                  </svg></span></div>
+              <div class="stop">1 stop</div>
+            </div>
+            <div class="route-point">
+              <div class="time">09:15pm</div>
+              <div class="code">MAD</div>
+              <div class="day">Oct 20, WED</div>
+            </div>
+          </div>
+          <div class="baggage">
+            <div class="bag-chip"><span class="bag-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2">
+                  <rect x="6" y="7" width="12" height="14" rx="2" />
+                  <path d="M9 7V5a3 3 0 0 1 6 0v2" />
+                </svg></span>20kg</div>
+            <div class="bag-chip"><span class="bag-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2">
+                  <rect x="5" y="9" width="14" height="11" rx="2" />
+                  <path d="M9 9V6a3 3 0 0 1 6 0v3" />
+                </svg></span>10kg</div>
+          </div>
+          <div class="price-buy">
+            <span class="price-tag">210$ +</span>
+            <button class="buy-btn">Buy</button>
+          </div>
+        </article>
+
+        <article class="flight-card">
+          <div class="airline">
+            <span class="airline-mark">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" />
+              </svg>
+              SkyBridge Air
+            </span>
+            <span class="airline-sub">Comfort class</span>
+          </div>
+          <div class="route-block">
+            <div class="route-point">
+              <div class="time">04:00pm</div>
+              <div class="code">IEV</div>
+              <div class="day">Oct 20, WED</div>
+            </div>
+            <div class="route-mid">
+              <div class="dur">5h 15m</div>
+              <div class="route-line"><span class="plane-icon"><svg width="14" height="14" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="2.3">
+                    <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" />
+                  </svg></span></div>
+              <div class="stop">1 stop</div>
+            </div>
+            <div class="route-point">
+              <div class="time">09:15pm</div>
+              <div class="code">MAD</div>
+              <div class="day">Oct 20, WED</div>
+            </div>
+          </div>
+          <div class="baggage">
+            <div class="bag-chip"><span class="bag-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2">
+                  <rect x="6" y="7" width="12" height="14" rx="2" />
+                  <path d="M9 7V5a3 3 0 0 1 6 0v2" />
+                </svg></span>20kg</div>
+            <div class="bag-chip"><span class="bag-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2">
+                  <rect x="5" y="9" width="14" height="11" rx="2" />
+                  <path d="M9 9V6a3 3 0 0 1 6 0v3" />
+                </svg></span>10kg</div>
+          </div>
+          <div class="price-buy">
+            <span class="price-tag">210$ +</span>
+            <button class="buy-btn">Buy</button>
+          </div>
+        </article>
+
+        <article class="flight-card">
+          <div class="airline">
+            <span class="airline-mark">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" />
+              </svg>
+              SkyBridge Air
+            </span>
+            <span class="airline-sub">Comfort class</span>
+          </div>
+          <div class="route-block">
+            <div class="route-point">
+              <div class="time">04:00pm</div>
+              <div class="code">IEV</div>
+              <div class="day">Oct 20, WED</div>
+            </div>
+            <div class="route-mid">
+              <div class="dur">5h 15m</div>
+              <div class="route-line"><span class="plane-icon"><svg width="14" height="14" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="2.3">
+                    <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" />
+                  </svg></span></div>
+              <div class="stop">1 stop</div>
+            </div>
+            <div class="route-point">
+              <div class="time">09:15pm</div>
+              <div class="code">MAD</div>
+              <div class="day">Oct 20, WED</div>
+            </div>
+          </div>
+          <div class="baggage">
+            <div class="bag-chip"><span class="bag-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2">
+                  <rect x="6" y="7" width="12" height="14" rx="2" />
+                  <path d="M9 7V5a3 3 0 0 1 6 0v2" />
+                </svg></span>20kg</div>
+            <div class="bag-chip"><span class="bag-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2">
+                  <rect x="5" y="9" width="14" height="11" rx="2" />
+                  <path d="M9 9V6a3 3 0 0 1 6 0v3" />
+                </svg></span>10kg</div>
+          </div>
+          <div class="price-buy">
+            <span class="price-tag">210$ +</span>
+            <button class="buy-btn">Buy</button>
+          </div>
+        </article>
+
+        <article class="flight-card">
+          <div class="airline">
+            <span class="airline-mark">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" />
+              </svg>
+              SkyBridge Air
+            </span>
+            <span class="airline-sub">Comfort class</span>
+          </div>
+          <div class="route-block">
+            <div class="route-point">
+              <div class="time">04:00pm</div>
+              <div class="code">IEV</div>
+              <div class="day">Oct 20, WED</div>
+            </div>
+            <div class="route-mid">
+              <div class="dur">5h 15m</div>
+              <div class="route-line"><span class="plane-icon"><svg width="14" height="14" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="2.3">
+                    <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" />
+                  </svg></span></div>
+              <div class="stop">1 stop</div>
+            </div>
+            <div class="route-point">
+              <div class="time">09:15pm</div>
+              <div class="code">MAD</div>
+              <div class="day">Oct 20, WED</div>
+            </div>
+          </div>
+          <div class="baggage">
+            <div class="bag-chip"><span class="bag-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2">
+                  <rect x="6" y="7" width="12" height="14" rx="2" />
+                  <path d="M9 7V5a3 3 0 0 1 6 0v2" />
+                </svg></span>20kg</div>
+            <div class="bag-chip"><span class="bag-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2">
+                  <rect x="5" y="9" width="14" height="11" rx="2" />
+                  <path d="M9 9V6a3 3 0 0 1 6 0v3" />
+                </svg></span>10kg</div>
+          </div>
+          <div class="price-buy">
+            <span class="price-tag">210$ +</span>
+            <button class="buy-btn">Buy</button>
+          </div>
+        </article>
+
+        <button class="load-more">Load more flights</button>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    const navToggle = document.getElementById('navToggle');
+    const navLinks = document.getElementById('navLinks');
+    navToggle.addEventListener('click', () => navLinks.classList.toggle('open'));
+    document.querySelectorAll('.nav-links a').forEach(a => a.addEventListener('click', () => navLinks.classList.remove('open')));
+  </script>
+
+</body>
+
+</html>
