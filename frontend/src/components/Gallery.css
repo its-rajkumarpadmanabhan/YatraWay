@@ -1,0 +1,177 @@
+.gallery-container {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background-color: var(--cream-vanilla);
+  color: var(--cherry-cola);
+  padding: 4rem 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  text-align: center;
+  overflow: hidden;
+}
+
+/* Header Styles */
+.gallery-header {
+  margin-bottom: 2rem;
+}
+
+.gallery-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--cherry-cola);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.gallery-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin: 0.5rem 0;
+  color: var(--cherry-cola);
+}
+
+.gallery-subtitle {
+  font-size: 1rem;
+  color: var(--cherry-cola);
+  line-height: 1.5;
+  margin: 0 auto;
+  max-width: 400px;
+}
+
+/* Filter Pills */
+.filter-container {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 3rem;
+}
+
+.filter-btn {
+  background-color: transparent;
+  border: 1px solid var(--cherry-cola);
+  color: var(--cherry-cola);
+  padding: 0.5rem 1.25rem;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.filter-btn:hover {
+  background-color: rgba(154, 0, 2, 0.1);
+}
+
+.filter-btn.active {
+  background-color: var(--cherry-cola);
+  color: var(--cream-vanilla);
+}
+
+/* Carousel Styles */
+.carousel-container {
+  position: relative;
+  width: 100%;
+  height: 450px;
+  perspective: 1000px; /* Essential for 3D effect */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 3rem;
+}
+
+.carousel {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transform-style: preserve-3d;
+}
+
+.carousel-item {
+  position: absolute;
+  width: 300px;
+  height: 400px;
+  border-radius: 16px;
+  overflow: hidden;
+  transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  box-shadow: 0 10px 30px rgba(154, 0, 2, 0.2);
+  cursor: pointer;
+}
+
+.carousel-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* 3D Positioning */
+.carousel-item.active {
+  transform: translateX(0) scale(1) translateZ(0);
+  z-index: 5;
+  box-shadow: 0 20px 40px rgba(154, 0, 2, 0.4);
+}
+
+.carousel-item.prev1 {
+  transform: translateX(-180px) scale(0.85) translateZ(-50px);
+  z-index: 4;
+  opacity: 0.8;
+  filter: sepia(0.5) hue-rotate(-20deg) saturate(1.5) contrast(1.1) brightness(0.8);
+}
+
+.carousel-item.next1 {
+  transform: translateX(180px) scale(0.85) translateZ(-50px);
+  z-index: 4;
+  opacity: 0.8;
+  filter: sepia(0.5) hue-rotate(-20deg) saturate(1.5) contrast(1.1) brightness(0.8);
+}
+
+.carousel-item.prev2 {
+  transform: translateX(-320px) scale(0.7) translateZ(-100px);
+  z-index: 3;
+  opacity: 0.5;
+  filter: sepia(0.8) hue-rotate(-20deg) saturate(1.5) contrast(1.1) brightness(0.6);
+}
+
+.carousel-item.next2 {
+  transform: translateX(320px) scale(0.7) translateZ(-100px);
+  z-index: 3;
+  opacity: 0.5;
+  filter: sepia(0.8) hue-rotate(-20deg) saturate(1.5) contrast(1.1) brightness(0.6);
+}
+
+.carousel-item.hidden {
+  opacity: 0;
+  transform: scale(0.5) translateZ(-200px);
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Navigation Controls */
+.nav-controls {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.nav-btn {
+  background-color: transparent;
+  border: 1px solid var(--cherry-cola);
+  color: var(--cherry-cola);
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.nav-btn:hover {
+  background-color: rgba(154, 0, 2, 0.1);
+}
